@@ -10,7 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {unstable_cache as cache, revalidateTag} from 'next/cache';
+import {cache, revalidateTag} from 'next/cache';
 
 const PlatformGamesSchema = z.object({
   title: z.string().describe('The title of the game.'),
@@ -38,7 +38,7 @@ const fullPrompt = `Give me the list of free or claimable games available right 
     - 'title': The full and exact title of the game (string).
     - 'platform': The platform the game is on, matching one of the requested platforms (string).
     - 'dealLink': The direct URL to the game's store or claim page (string).
-    - 'imageURL': A direct, publicly accessible HTTPS URL for the game's cover art. It should be high quality. (string).
+    - 'imageURL': A direct, publicly accessible HTTPS URL for the game's cover art. It should be high quality. STRICTLY USE THE STEAM CDN FORMAT (e.g., cdn.akamai.steamstatic.com/steam/apps/APP_ID/header.jpg or capsule_616x353.jpg) for ALL images to ensure embeddability. If a game is not on Steam, you must find and use a publicly embeddable link from a non-expiring host. (string).
     - 'endDate': The date the deal ends in ISO format, if available (string, optional).
     - 'original_price': The standard retail price before the discount (e.g., "$19.99"). This can be an empty string if not applicable or not found (string).
 
@@ -68,12 +68,21 @@ const fetchFreeGamesFlow = ai.defineFlow(
 const getCachedGames = cache(
   async (platforms: string): Promise<Omit<FetchGamesResult, 'source'>> => {
     console.log('Fetching from API and caching...');
-    const games = await fetchFreeGamesFlow({ platforms });
-    return {
-      games,
-      prompt: fullPrompt,
-      timestamp: new Date().toISOString(),
-    };
+    try {
+      const games = await fetchFreeGamesFlow({ platforms });
+      return {
+        games,
+        prompt: fullPrompt,
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+        console.error("Error fetching games from API:", error);
+        // Throw the error to be caught by the caller, so it can be displayed in the UI.
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching games.');
+    }
   },
   ['free-games-data-v2'],
   {
@@ -90,7 +99,7 @@ export async function fetchAndCacheFreeGames(platforms: string): Promise<FetchGa
 
   // A very small diff indicates it was just fetched. A larger one means it came from cache.
   // This is a heuristic, but it's effective for telling the user the source.
-  const source = diffInSeconds < 2 ? 'API' : 'Cache';
+  const source = diffInSeconds < 5 ? 'API' : 'Cache';
   
   return {
     ...data,

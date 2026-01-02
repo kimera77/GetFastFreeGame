@@ -5,18 +5,25 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlatformIcon } from '@/components/icons/platform-icon';
 import type { Game } from '@/lib/game';
+import { useState } from 'react';
+import { GameplayPreviewModal } from './gameplay-preview-modal';
+import { translations, type Language } from '@/lib/translations';
 
 type GameCardProps = {
   game: Game & { platform: string };
   translations: {
     getGame: string;
+    gameplayPreview: string;
   };
 };
 
 export function GameCard({ game, translations }: GameCardProps) {
+  const [isPreviewOpen, setPreviewOpen] = useState(false);
+
   return (
+    <>
     <Card className="flex flex-col sm:flex-row items-center p-4 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30 bg-card/80 backdrop-blur-sm border-border/30 w-full group">
-       <div className="flex-shrink-0 w-full sm:w-32 h-32 sm:h-20 relative mb-4 sm:mb-0 sm:mr-4">
+       <div className="flex-shrink-0 w-full sm:w-48 h-32 sm:h-24 relative mb-4 sm:mb-0 sm:mr-4 cursor-pointer" onClick={() => setPreviewOpen(true)}>
           <Image
             src={game.cover_image}
             alt={`Cover art for ${game.name}`}
@@ -28,19 +35,22 @@ export function GameCard({ game, translations }: GameCardProps) {
         <div className="flex-grow flex items-center gap-4">
            <PlatformIcon platform={game.platform} className="h-10 w-10" />
            <div>
-            <h2 className="text-md sm:text-lg font-headline font-bold text-foreground group-hover:text-primary transition-colors mb-1">
+            <h2 className="text-md sm:text-lg font-headline font-bold text-foreground group-hover:text-primary transition-colors mb-1 cursor-pointer" onClick={() => setPreviewOpen(true)}>
               {game.name}
             </h2>
             <span className="text-sm font-semibold text-muted-foreground">{game.platform}</span>
           </div>
         </div>
         
-        <div className="flex-shrink-0 flex items-center justify-end gap-4 w-full sm:w-auto mt-3 sm:mt-0">
+        <div className="flex-shrink-0 flex items-center justify-end gap-2 w-full sm:w-auto mt-3 sm:mt-0">
            {game.original_price && game.original_price.trim() !== '' && (
               <span className="text-sm text-muted-foreground line-through">
                 {game.original_price}
               </span>
             )}
+           <Button onClick={() => setPreviewOpen(true)} variant="outline" size="sm" className="w-full sm:w-auto">
+            {translations.gameplayPreview}
+          </Button>
            <Button asChild variant="default" size="sm" className="w-full sm:w-auto bg-primary hover:bg-primary/80 text-primary-foreground font-bold">
             <a href={game.game_link} target="_blank" rel="noopener noreferrer">
               {translations.getGame}
@@ -49,5 +59,11 @@ export function GameCard({ game, translations }: GameCardProps) {
         </div>
       </div>
     </Card>
+     <GameplayPreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setPreviewOpen(false)}
+        gameTitle={game.name}
+      />
+    </>
   );
 }

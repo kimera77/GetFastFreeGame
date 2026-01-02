@@ -8,6 +8,8 @@ import type { PlatformGames } from '@/lib/game-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
+import { GameplayPreviewModal } from './gameplay-preview-modal';
+
 
 type GameListProps = {
     initialGameData: PlatformGames | null;
@@ -46,7 +48,7 @@ export function GameList({ initialGameData, initialError }: GameListProps) {
         {isLoading ? (
           <div className="mt-8 flex flex-col gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} className="h-24 w-full rounded-lg" />
+              <Skeleton key={i} className="h-28 w-full rounded-lg" />
             ))}
           </div>
         ) : initialError ? (
