@@ -1,11 +1,10 @@
 import { fetchAndCacheFreeGames, type FreeGame } from '@/ai/flows/fetch-and-cache-free-games';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { GameList } from '@/components/game-list';
 import { LoadingSkeleton } from '@/components/loading-skeleton';
 import { Suspense } from 'react';
-import type { GameWithImage } from '@/components/game-card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
+import type { Game } from '@/lib/game';
 
 async function GamesSection() {
   let games: FreeGame[] = [];
@@ -25,15 +24,15 @@ async function GamesSection() {
   }
 
   // The AI mock returns fixed data. We'll augment it with placeholder images.
-  const gamesWithImages: GameWithImage[] = games.map((game, index) => ({
-    ...game,
-    displayImage: {
-      url: PlaceHolderImages[index % PlaceHolderImages.length].imageUrl,
-      hint: PlaceHolderImages[index % PlaceHolderImages.length].imageHint,
-    },
+  const gamesWithData: (Game & { platform: string })[] = games.map((game) => ({
+    name: game.title,
+    platform: game.platform,
+    game_link: game.dealLink,
+    cover_image: game.imageURL,
+    original_price: '$19.99'
   }));
 
-  if (gamesWithImages.length === 0) {
+  if (gamesWithData.length === 0) {
     return (
       <Alert>
         <Terminal className="h-4 w-4" />
@@ -45,7 +44,11 @@ async function GamesSection() {
     );
   }
 
-  return <GameList games={gamesWithImages} />;
+  const translations = {
+    getGame: 'Get Game'
+  };
+
+  return <GameList games={gamesWithData} translations={translations} />;
 }
 
 function LoadingGrid() {

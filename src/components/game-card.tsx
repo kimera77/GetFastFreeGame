@@ -1,56 +1,56 @@
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import type { FreeGame } from '@/ai/flows/fetch-and-cache-free-games';
-import { PlatformIcon } from './platform-icons';
-import { ExternalLink, Video } from 'lucide-react';
+'use client';
 
-export type GameWithImage = FreeGame & { displayImage: { url: string; hint: string } };
+import Image from 'next/image';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { PlatformIcon } from '@/components/icons/platform-icon';
+import type { Game } from '@/lib/game';
 
 type GameCardProps = {
-  game: GameWithImage;
-  onPreviewClick: (game: GameWithImage) => void;
+  game: Game & { platform: string };
+  translations: {
+    getGame: string;
+  };
 };
 
-export function GameCard({ game, onPreviewClick }: GameCardProps) {
+export function GameCard({ game, translations }: GameCardProps) {
   return (
-    <Card className="flex flex-col overflow-hidden rounded-lg border-border bg-card shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-      <CardHeader className="relative p-0">
+    <Card className="flex flex-col sm:flex-row items-center p-3 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30 bg-card/80 backdrop-blur-sm border-border/30 w-full group">
+      <div className="w-full sm:w-40 h-32 sm:h-24 relative flex-shrink-0 mb-3 sm:mb-0 sm:mr-4">
         <Image
-          src={game.displayImage.url}
-          alt={`Cover art for ${game.title}`}
-          width={400}
-          height={300}
-          className="w-full object-cover"
-          data-ai-hint={game.displayImage.hint}
+          src={game.cover_image}
+          alt={`Cover art for ${game.name}`}
+          fill
+          className="object-cover rounded-md"
+          sizes="(max-width: 640px) 100vw, 160px"
+          data-ai-hint="game cover art"
         />
-        <div className="absolute top-2 right-2 rounded-full bg-background/80 p-2 backdrop-blur-sm">
-          <PlatformIcon platform={game.platform} className="h-6 w-6 text-foreground" />
+      </div>
+
+      <div className="flex-grow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
+        <div className="flex-grow">
+           <h2 className="text-md sm:text-lg font-headline font-bold text-foreground group-hover:text-primary transition-colors mb-1">
+            {game.name}
+          </h2>
+          <div className="flex items-center gap-2">
+            <PlatformIcon platform={game.platform} className="h-10 w-10" />
+            <span className="text-sm font-semibold text-muted-foreground">{game.platform}</span>
+          </div>
         </div>
-      </CardHeader>
-      <CardContent className="flex-grow p-4">
-        <CardTitle className="font-headline text-xl leading-tight">
-          {game.title}
-        </CardTitle>
-      </CardContent>
-      <CardFooter className="grid grid-cols-2 gap-2 p-4 pt-0">
-        <Button variant="outline" onClick={() => onPreviewClick(game)}>
-          <Video className="mr-2 h-4 w-4" />
-          Preview
-        </Button>
-        <Button asChild>
-          <a href={game.dealLink} target="_blank" rel="noopener noreferrer">
-            <ExternalLink className="mr-2 h-4 w-4" />
-            Claim Now
-          </a>
-        </Button>
-      </CardFooter>
+        
+        <div className="flex-shrink-0 flex items-center justify-end gap-4 w-full sm:w-auto mt-3 sm:mt-0">
+           {game.original_price && game.original_price.trim() !== '' && (
+              <span className="text-sm text-muted-foreground line-through">
+                {game.original_price}
+              </span>
+            )}
+           <Button asChild variant="default" size="sm" className="w-full sm:w-auto bg-primary hover:bg-primary/80 text-primary-foreground font-bold">
+            <a href={game.game_link} target="_blank" rel="noopener noreferrer">
+              {translations.getGame}
+            </a>
+          </Button>
+        </div>
+      </div>
     </Card>
   );
 }

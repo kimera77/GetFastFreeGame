@@ -1,32 +1,26 @@
 'use client';
 
-import { useState } from 'react';
-import { GameCard, type GameWithImage } from './game-card';
-import { GameplayPreviewModal } from './gameplay-preview-modal';
+import { GameCard } from './game-card';
+import type { Game } from '@/lib/game';
+
 
 type GameListProps = {
-  games: GameWithImage[];
+  games: (Game & {platform: string})[];
+  translations: {
+    getGame: string;
+  };
 };
 
-export function GameList({ games }: GameListProps) {
-  const [selectedGame, setSelectedGame] = useState<GameWithImage | null>(null);
-
+export function GameList({ games, translations }: GameListProps) {
   return (
-    <>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {games.map((game, index) => (
-          <GameCard
-            key={`${game.title}-${index}`}
-            game={game}
-            onPreviewClick={setSelectedGame}
-          />
-        ))}
-      </div>
-      <GameplayPreviewModal
-        gameTitle={selectedGame?.title ?? null}
-        isOpen={!!selectedGame}
-        onClose={() => setSelectedGame(null)}
-      />
-    </>
+    <div className="grid grid-cols-1 gap-4">
+      {games.map((game, index) => (
+        <GameCard
+          key={`${game.name}-${index}`}
+          game={game}
+          translations={translations}
+        />
+      ))}
+    </div>
   );
 }
