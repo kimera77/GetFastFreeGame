@@ -16,6 +16,14 @@ type GameCardProps = {
 export function GameCard({ game, translations }: GameCardProps) {
   return (
     <Card className="flex flex-col sm:flex-row items-center p-4 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30 bg-card/80 backdrop-blur-sm border-border/30 w-full group">
+       <div className="flex-shrink-0 w-full sm:w-32 h-32 sm:h-20 relative mb-4 sm:mb-0 sm:mr-4">
+          <Image
+            src={game.cover_image}
+            alt={`Cover art for ${game.name}`}
+            fill
+            className="object-cover rounded-md"
+          />
+        </div>
       <div className="flex-grow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
         <div className="flex-grow flex items-center gap-4">
            <PlatformIcon platform={game.platform} className="h-10 w-10" />
