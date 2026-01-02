@@ -75,8 +75,7 @@ const getCachedGames = unstable_cache(
       timestamp: new Date().toISOString(),
     };
   },
-  ['free-games-data-v2'],
-  { revalidate: 43200 } // 12 hours
+  ['free-games-data-v2']
 );
 
 export async function fetchAndCacheFreeGames(platforms: string): Promise<FetchGamesResult> {
