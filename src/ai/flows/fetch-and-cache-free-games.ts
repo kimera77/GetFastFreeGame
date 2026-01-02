@@ -11,6 +11,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import {unstable_cache} from 'next/cache';
+import { freeGamesPrompt } from '@/lib/translations';
 
 const PlatformGamesSchema = z.object({
   title: z.string().describe('The title of the game.'),
@@ -23,6 +24,13 @@ const PlatformGamesSchema = z.object({
 export type FreeGame = z.infer<typeof PlatformGamesSchema>;
 
 const FreeGamesOutputSchema = z.array(PlatformGamesSchema);
+
+export type FetchGamesResult = {
+  games: FreeGame[];
+  source: 'API' | 'Cache';
+  prompt: string;
+  timestamp: string;
+};
 
 const getFreeGames = async (input: { platforms: string }): Promise<FreeGame[]> => {
     console.log("Fetching free games from mock data...");
@@ -69,13 +77,34 @@ const fetchFreeGamesFlow = ai.defineFlow(
   }
 );
 
-export async function fetchAndCacheFreeGames(platforms: string): Promise<FreeGame[]> {
-  return unstable_cache(
-    async () => {
-      console.log("Running flow to fetch free games...");
-      return await fetchFreeGamesFlow({ platforms });
-    },
-    ["free-games-data"],
-    { revalidate: 3600 }, // Cache for 1 hour
-  )();
+const getCachedGames = unstable_cache(
+  async (platforms: string): Promise<Omit<FetchGamesResult, 'source'>> => {
+    console.log('Fetching from API and caching...');
+    const games = await fetchFreeGamesFlow({ platforms });
+    return {
+      games,
+      prompt: freeGamesPrompt,
+      timestamp: new Date().toISOString(),
+    };
+  },
+  ['free-games-data-v2'],
+  { revalidate: 43200 } // 12 hours
+);
+
+export async function fetchAndCacheFreeGames(platforms: string): Promise<FetchGamesResult> {
+  const data = await getCachedGames(platforms);
+  
+  const now = new Date();
+  const cacheTime = new Date(data.timestamp);
+  const diffInSeconds = (now.getTime() - cacheTime.getTime()) / 1000;
+
+  // If the data is very fresh (e.g., created within the last 2 seconds),
+  // we can assume it came directly from the API call inside unstable_cache.
+  // Otherwise, it was served from the cache.
+  const source = diffInSeconds < 2 ? 'API' : 'Cache';
+  
+  return {
+    ...data,
+    source,
+  };
 }
