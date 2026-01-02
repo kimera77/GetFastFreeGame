@@ -60,24 +60,4 @@ export const translations: Record<Language, Translation> = {
   },
 };
 
-// =================================================================
-// ESTE ES EL PROMPT QUE SE ENVÍA A GEMINI
-// =================================================================
-/*export const freeGamesPrompt = `Give me the list of free or claimable games available right now. I need the response to be ONLY a raw JSON object, without any additional text, explanations, or markdown formatting like \`\`\`json.
-The JSON object must have keys for the following platforms: 'Epic Games Store', 'Amazon Prime Gaming', 'GOG', and 'Steam'.
-The value for each platform key must be an array of game objects.
-Each game object must have these exact properties:
-- 'name': The full and exact title of the game (string).
-- 'game_link': The direct URL to the game's store or claim page (string).
-- 'cover_image': A direct, publicly accessible HTTPS URL for the game's cover art. It should be high quality. For Steam games, you MUST use the Steam CDN format (e.g., cdn.akamai.steamstatic.com/steam/apps/APP_ID/header.jpg or capsule_616x353.jpg) if possible to ensure the image is embeddable. (string).
-- 'original_price': The standard retail price before the discount (e.g., "$19.99"). This can be an empty string if not applicable or not found (string).
-
-If a platform has no free games, its value must be an empty array [].
-Your entire response must be just the JSON object, starting with { and ending with }.`;
-*/
-// =================================================================
-
-
-export const freeGamesPrompt = `Give me the list of free claimable games available right now in JSON format. The JSON must contain a parent object where the keys are the platforms ('Epic Games Store', 'Amazon Prime Gaming', 'GOG', 'Steam'). The value for each key must be a list of games. Each game in the list must be an object with the properties: 'name' (the game title), 'game_link' (the direct URL to the game's claim page), 'cover_image' (a direct, publicly accessible HTTPS URL for the game's high-quality cover art. **STRICTLY USE THE STEAM CDN FORMAT (e.g., cdn.akamai.steamstatic.com/steam/apps/APP_ID/header.jpg or capsule_616x353.jpg) for ALL images to ensure embeddability.**), and 'original_price' (the standard price without the discount, e.g., '$19.99'). If a platform has no games, its value must be an empty list []. Respond ONLY with the JSON, using English for ALL keys and values, with no introduction, no additional text, no Markdown code formatting, no bullet points, and no bolding.`;
-// Esta es la etiqueta (tag) que se usa para cachear la respuesta en Next.js
 export const FREE_GAMES_CACHE_TAG = 'free-games-list';
