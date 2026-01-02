@@ -24,17 +24,8 @@ export type FreeGame = z.infer<typeof PlatformGamesSchema>;
 
 const FreeGamesOutputSchema = z.array(PlatformGamesSchema);
 
-const getFreeGames = ai.defineTool(
-  {
-    name: 'getFreeGames',
-    description: 'Retrieves a list of free games available on different platforms.',
-    inputSchema: z.object({
-      platforms: z.string().describe('The platforms to search for free games on. Options: Epic Games Store, Amazon Prime Gaming, GOG, Steam.  If multiple, separate with commas.'),
-    }),
-    outputSchema: FreeGamesOutputSchema,
-  },
-  async (input) => {
-    console.log("Fetching free games from LLM tool...");
+const getFreeGames = async (input: { platforms: string }): Promise<FreeGame[]> => {
+    console.log("Fetching free games from mock data...");
     // Replace with actual implementation to fetch game data.
     return [
       {
@@ -50,21 +41,7 @@ const getFreeGames = ai.defineTool(
         imageURL: 'https://example.com/game2.jpg',
       },
     ];
-  }
-);
-
-const freeGamesPrompt = ai.definePrompt({
-  name: 'freeGamesPrompt',
-  tools: [getFreeGames],
-  input: z.object({
-    platforms: z.string().describe('The platforms to search for free games on.'),
-  }),
-  output: {
-    schema: FreeGamesOutputSchema,
-  },
-  prompt: `Find the current list of free games available on the following platforms: {{{platforms}}}.\nReturn the result as a JSON array.
-Make sure the imageURL is a direct link to the image (not a link to a webpage that contains the image).`,
-});
+}
 
 
 const fetchFreeGamesFlow = ai.defineFlow(
@@ -76,8 +53,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
     outputSchema: FreeGamesOutputSchema,
   },
   async (input) => {
-    const {output} = await freeGamesPrompt(input);
-    return output!;
+    return await getFreeGames(input);
   }
 );
 
