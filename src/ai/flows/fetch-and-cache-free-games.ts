@@ -32,38 +32,6 @@ export type FetchGamesResult = {
   timestamp: string;
 };
 
-const getFreeGames = async (input: { platforms: string }): Promise<FreeGame[]> => {
-    console.log("Fetching free games from mock data...");
-    // Replace with actual implementation to fetch game data.
-    return [
-      {
-        title: 'Cyberpunk 2077',
-        platform: 'Epic Games Store',
-        dealLink: 'https://example.com/game1',
-        imageURL: 'https://picsum.photos/seed/1/400/300',
-      },
-      {
-        title: 'Baldur\'s Gate 3',
-        platform: 'Steam',
-        dealLink: 'https://example.com/game2',
-        imageURL: 'https://picsum.photos/seed/2/400/300',
-      },
-       {
-        title: 'Red Dead Redemption 2',
-        platform: 'GOG',
-        dealLink: 'https://example.com/game3',
-        imageURL: 'https://picsum.photos/seed/3/400/300',
-      },
-       {
-        title: 'The Witcher 3: Wild Hunt',
-        platform: 'Amazon Prime Gaming',
-        dealLink: 'https://example.com/game4',
-        imageURL: 'https://picsum.photos/seed/4/400/300',
-      },
-    ];
-}
-
-
 const fetchFreeGamesFlow = ai.defineFlow(
   {
     name: 'fetchFreeGamesFlow',
@@ -73,7 +41,26 @@ const fetchFreeGamesFlow = ai.defineFlow(
     outputSchema: FreeGamesOutputSchema,
   },
   async (input) => {
-    return await getFreeGames(input);
+    const prompt = `Give me the list of free or claimable games available right now on the following platforms: ${input.platforms}.
+    I need the response to be ONLY a raw JSON array, without any additional text, explanations, or markdown formatting like \`\`\`json.
+    Each game object in the array must have these exact properties:
+    - 'title': The full and exact title of the game (string).
+    - 'platform': The platform the game is on, matching one of the requested platforms (string).
+    - 'dealLink': The direct URL to the game's store or claim page (string).
+    - 'imageURL': A direct, publicly accessible HTTPS URL for the game's cover art. It should be high quality. (string).
+    - 'endDate': The date the deal ends in ISO format, if available (string, optional).
+
+    If a platform has no free games, do not include it.
+    Your entire response must be just the JSON array, starting with [ and ending with ].`;
+
+    const {output} = await ai.generate({
+      prompt: prompt,
+      output: {
+        schema: FreeGamesOutputSchema,
+      },
+    });
+
+    return output || [];
   }
 );
 
