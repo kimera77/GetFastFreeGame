@@ -32,7 +32,7 @@ export function GameCard({ game, translations }: GameCardProps) {
         </div>
       <div className="flex-grow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
         <div className="flex-grow">
-          <h2 className="text-xl font-bold font-headline text-foreground group-hover:text-primary transition-colors mb-1 cursor-pointer" onClick={() => setPreviewOpen(true)}>
+           <h2 className="text-xl font-bold font-headline text-foreground group-hover:text-primary transition-colors mb-1 cursor-pointer" onClick={() => setPreviewOpen(true)}>
             {game.name}
           </h2>
           <div className="flex items-center gap-2">
@@ -41,20 +41,20 @@ export function GameCard({ game, translations }: GameCardProps) {
           </div>
         </div>
         
-        <div className="flex-shrink-0 flex flex-col items-stretch gap-2 w-full sm:w-auto mt-3 sm:mt-0">
+        <div className="flex-shrink-0 flex flex-col items-end gap-2 w-full sm:w-auto mt-3 sm:mt-0">
            <div className="flex items-center justify-end gap-2">
             {game.original_price && game.original_price.trim() !== '' && (
                 <span className="text-sm text-muted-foreground line-through">
                   {game.original_price}
                 </span>
               )}
-            <Button asChild variant="default" size="sm" className="w-full sm:w-auto bg-primary hover:bg-primary/80 text-primary-foreground font-bold">
+            <Button asChild variant="default" size="sm" className="bg-primary hover:bg-primary/80 text-primary-foreground font-bold">
               <a href={game.game_link} target="_blank" rel="noopener noreferrer">
                 {translations.getGame}
               </a>
             </Button>
            </div>
-           <Button onClick={() => setPreviewOpen(true)} variant="outline" size="sm" className="w-full sm:w-auto">
+           <Button onClick={() => setPreviewOpen(true)} variant="outline" size="sm" >
             {translations.gameplayPreview}
           </Button>
         </div>
