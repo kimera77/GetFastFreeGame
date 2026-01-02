@@ -22,7 +22,7 @@ export function Header({ language, setLanguage }: HeaderProps) {
         value={language}
         onValueChange={(value) => setLanguage(value as Language)}
       >
-        <SelectTrigger className="w-auto bg-transparent border-0 gap-2">
+        <SelectTrigger className="w-auto bg-transparent border-0 gap-2 items-center">
           <Globe className="h-4 w-4 text-muted-foreground" />
           <SelectValue placeholder="Language" />
         </SelectTrigger>
