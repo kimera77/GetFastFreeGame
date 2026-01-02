@@ -8,7 +8,6 @@ import type { PlatformGames } from '@/lib/game-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
-import { GameplayPreviewModal } from './gameplay-preview-modal';
 
 
 type GameListProps = {

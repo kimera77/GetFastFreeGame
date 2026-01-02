@@ -5,7 +5,6 @@ type Translation = {
   headerSubtitle: string;
   description: string;
   getGame: string;
-  gameplayPreview: string;
   close: string;
 };
 
@@ -15,7 +14,6 @@ export const translations: Record<Language, Translation> = {
     description:
       'Stay up-to-date with all the limited-time, fully redeemable free games available on major video game platforms.',
     getGame: 'Get Game',
-    gameplayPreview: 'Gameplay',
     close: 'Close',
   },
   es: {
@@ -23,7 +21,6 @@ export const translations: Record<Language, Translation> = {
     description:
       'Mantente al día de todos los juegos gratuitos por tiempo limitado que puedes canjear en las principales plataformas de videojuegos.',
     getGame: 'Obtener Juego',
-    gameplayPreview: 'Gameplay',
     close: 'Cerrar',
   },
   de: {
@@ -31,7 +28,6 @@ export const translations: Record<Language, Translation> = {
     description:
       'Bleiben Sie über alle zeitlich begrenzten, vollständig einlösbaren kostenlosen Spiele auf dem Laufenden, die auf den wichtigsten Videospielplattformen verfügbar sind.',
     getGame: 'Spiel holen',
-    gameplayPreview: 'Gameplay',
     close: 'Schließen',
   },
   fr: {
@@ -39,7 +35,6 @@ export const translations: Record<Language, Translation> = {
     description:
       'Restez à jour avec tous les jeux gratuits à durée limitée, entièrement récupérables, disponibles sur les principales plateformes de jeux vidéo.',
     getGame: 'Obtenir le jeu',
-    gameplayPreview: 'Gameplay',
     close: 'Fermer',
   },
   pt: {
@@ -47,7 +42,6 @@ export const translations: Record<Language, Translation> = {
     description:
       'Mantenha-se atualizado com todos os jogos gratuitos por tempo limitado e totalmente resgatáveis disponíveis nas principais plataformas de videojogos.',
     getGame: 'Obter Jogo',
-    gameplayPreview: 'Gameplay',
     close: 'Fechar',
   },
   it: {
@@ -55,7 +49,6 @@ export const translations: Record<Language, Translation> = {
     description:
       'Rimani aggiornato su tutti i giochi gratuiti a tempo limitato e completamente riscattabili disponibili sulle principali piattaforme di videogiochi.',
     getGame: 'Ottieni Gioco',
-    gameplayPreview: 'Gameplay',
     close: 'Chiudi',
   },
 };
