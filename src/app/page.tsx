@@ -10,52 +10,49 @@ import { Separator } from '@/components/ui/separator';
 import { ClearCacheButton } from '@/components/clear-cache-button';
 
 async function GamesSection() {
-  let result: FetchGamesResult;
+  let result: FetchGamesResult | null = null;
+  let error: Error | null = null;
+  
   try {
     result = await fetchAndCacheFreeGames('Epic Games Store,Amazon Prime Gaming,GOG,Steam');
-  } catch (error) {
-    console.error("Failed to fetch games:", error);
-    return (
-      <Alert variant="destructive">
-        <Terminal className="h-4 w-4" />
-        <AlertTitle>Failed to load games</AlertTitle>
-        <AlertDescription>
-          There was an error fetching the latest free games. Please try again later.
-        </AlertDescription>
-      </Alert>
-    );
+  } catch (e) {
+    console.error("Failed to fetch games:", e);
+    error = e instanceof Error ? e : new Error('An unknown error occurred.');
   }
 
-  // The AI mock returns fixed data. We'll augment it with placeholder images.
-  const gamesWithData: (Game & { platform: string })[] = result.games.map((game) => ({
+  const gamesWithData = result?.games.map((game) => ({
     name: game.title,
     platform: game.platform,
     game_link: game.dealLink,
     cover_image: game.imageURL,
-    original_price: '$19.99'
-  }));
+    original_price: game.original_price
+  })) || [];
 
-  if (gamesWithData.length === 0) {
-    return (
-      <Alert>
-        <Terminal className="h-4 w-4" />
-        <AlertTitle>No free games found</AlertTitle>
-        <AlertDescription>
-          Check back later for new free game drops!
-        </AlertDescription>
-      </Alert>
-    );
-  }
+  const platformGames = {
+    "Epic Games Store": gamesWithData.filter(g => g.platform === 'Epic Games Store'),
+    "Amazon Prime Gaming": gamesWithData.filter(g => g.platform === 'Amazon Prime Gaming'),
+    "GOG": gamesWithData.filter(g => g.platform === 'GOG'),
+    "Steam": gamesWithData.filter(g => g.platform === 'Steam'),
+  };
 
   return (
     <>
-      <GameList initialGameData={{ 
-        "Epic Games Store": gamesWithData.filter(g => g.platform === 'Epic Games Store'),
-        "Amazon Prime Gaming": gamesWithData.filter(g => g.platform === 'Amazon Prime Gaming'),
-        "GOG": gamesWithData.filter(g => g.platform === 'GOG'),
-        "Steam": gamesWithData.filter(g => g.platform === 'Steam'),
-      }} initialError={null} />
-      <DebugInfo result={result} />
+      <GameList initialGameData={platformGames} initialError={error?.message || null} />
+      {result && <DebugInfo result={result} />}
+      {error && !result && (
+         <div className="container mx-auto px-4 py-8">
+            <Alert variant="destructive">
+              <Terminal className="h-4 w-4" />
+              <AlertTitle>Failed to load games</AlertTitle>
+              <AlertDescription>
+                <p>There was an error fetching the latest free games:</p>
+                <pre className="mt-2 whitespace-pre-wrap rounded-md bg-destructive/10 p-4 text-destructive-foreground">
+                  <code>{error.message}</code>
+                </pre>
+              </AlertDescription>
+            </Alert>
+         </div>
+      )}
     </>
   );
 }

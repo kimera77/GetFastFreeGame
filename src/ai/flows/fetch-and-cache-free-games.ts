@@ -11,7 +11,6 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import {unstable_cache} from 'next/cache';
-import { freeGamesPrompt } from '@/lib/translations';
 
 const PlatformGamesSchema = z.object({
   title: z.string().describe('The title of the game.'),
@@ -19,6 +18,7 @@ const PlatformGamesSchema = z.object({
   dealLink: z.string().url().describe('Direct link to the game download page.'),
   imageURL: z.string().url().describe('Direct URL to the game image.'),
   endDate: z.string().optional().describe('The date the deal ends, if applicable, in ISO format.'),
+  original_price: z.string().optional().describe('The standard retail price before the discount (e.g., "$19.99"). This can be an empty string if not applicable or not found.'),
 });
 
 export type FreeGame = z.infer<typeof PlatformGamesSchema>;
@@ -32,6 +32,19 @@ export type FetchGamesResult = {
   timestamp: string;
 };
 
+const fullPrompt = `Give me the list of free or claimable games available right now on the following platforms: Epic Games Store,Amazon Prime Gaming,GOG,Steam.
+    I need the response to be ONLY a raw JSON array, without any additional text, explanations, or markdown formatting like \`\`\`json.
+    Each game object in the array must have these exact properties:
+    - 'title': The full and exact title of the game (string).
+    - 'platform': The platform the game is on, matching one of the requested platforms (string).
+    - 'dealLink': The direct URL to the game's store or claim page (string).
+    - 'imageURL': A direct, publicly accessible HTTPS URL for the game's cover art. It should be high quality. (string).
+    - 'endDate': The date the deal ends in ISO format, if available (string, optional).
+    - 'original_price': The standard retail price before the discount (e.g., "$19.99"). This can be an empty string if not applicable or not found (string).
+
+    If a platform has no free games, do not include it.
+    Your entire response must be just the JSON array, starting with [ and ending with ].`;
+
 const fetchFreeGamesFlow = ai.defineFlow(
   {
     name: 'fetchFreeGamesFlow',
@@ -41,20 +54,8 @@ const fetchFreeGamesFlow = ai.defineFlow(
     outputSchema: FreeGamesOutputSchema,
   },
   async (input) => {
-    const prompt = `Give me the list of free or claimable games available right now on the following platforms: ${input.platforms}.
-    I need the response to be ONLY a raw JSON array, without any additional text, explanations, or markdown formatting like \`\`\`json.
-    Each game object in the array must have these exact properties:
-    - 'title': The full and exact title of the game (string).
-    - 'platform': The platform the game is on, matching one of the requested platforms (string).
-    - 'dealLink': The direct URL to the game's store or claim page (string).
-    - 'imageURL': A direct, publicly accessible HTTPS URL for the game's cover art. It should be high quality. (string).
-    - 'endDate': The date the deal ends in ISO format, if available (string, optional).
-
-    If a platform has no free games, do not include it.
-    Your entire response must be just the JSON array, starting with [ and ending with ].`;
-
     const {output} = await ai.generate({
-      prompt: prompt,
+      prompt: fullPrompt,
       output: {
         schema: FreeGamesOutputSchema,
       },
@@ -70,7 +71,7 @@ const getCachedGames = unstable_cache(
     const games = await fetchFreeGamesFlow({ platforms });
     return {
       games,
-      prompt: freeGamesPrompt,
+      prompt: fullPrompt,
       timestamp: new Date().toISOString(),
     };
   },

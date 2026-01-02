@@ -6,6 +6,8 @@ import { Header } from '@/components/layout/header';
 import { GameCard } from '@/components/game-card';
 import type { PlatformGames } from '@/lib/game-data';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Terminal } from 'lucide-react';
 
 type GameListProps = {
     initialGameData: PlatformGames | null;
@@ -48,10 +50,14 @@ export function GameList({ initialGameData, initialError }: GameListProps) {
             ))}
           </div>
         ) : initialError ? (
-          <div className="text-center text-destructive py-10 bg-destructive/10 rounded-lg">
-            <p className="font-bold">Oops! Something went wrong.</p>
-            <p>{initialError}</p>
-          </div>
+          <Alert variant="destructive">
+            <Terminal className="h-4 w-4" />
+            <AlertTitle>Error Fetching Games</AlertTitle>
+            <AlertDescription>
+                <p>Could not retrieve the game list from the API.</p>
+                <pre className="mt-2 whitespace-pre-wrap text-xs"><code>{initialError}</code></pre>
+            </AlertDescription>
+          </Alert>
         ) : (
           <div className="mt-8 flex flex-col gap-4">
             {allGames.length > 0 ? (
