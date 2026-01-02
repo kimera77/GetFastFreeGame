@@ -7,6 +7,7 @@ import { Terminal, Info, Database, Cloud } from 'lucide-react';
 import type { Game } from '@/lib/game';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { ClearCacheButton } from '@/components/clear-cache-button';
 
 async function GamesSection() {
   let result: FetchGamesResult;
@@ -68,10 +69,13 @@ function DebugInfo({ result }: { result: FetchGamesResult }) {
       <h2 className="text-2xl font-headline font-bold mb-4 text-center">Debug Information</h2>
       <Card className="bg-card/50">
         <CardHeader>
-           <CardTitle className="flex items-center gap-2 text-lg">
-             <Info className="h-5 w-5" />
-             Data Fetching Details
-           </CardTitle>
+           <div className="flex justify-between items-center">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Info className="h-5 w-5" />
+              Data Fetching Details
+            </CardTitle>
+            <ClearCacheButton />
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4 p-4 rounded-lg bg-muted/50">
