@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "game-1",
+      "description": "Placeholder image for a fantasy game",
+      "imageUrl": "https://images.unsplash.com/photo-1432958576632-8a39f6b97dc7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmYW50YXN5JTIwbGFuZHNjYXBlfGVufDB8fHx8MTc2NzI3NjgxM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fantasy landscape"
+    },
+    {
+      "id": "game-2",
+      "description": "Placeholder image for a sci-fi game",
+      "imageUrl": "https://images.unsplash.com/photo-1655330862874-f7997686a244?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzY2ktZmklMjBjaXR5fGVufDB8fHx8MTc2NzM2MzM2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sci-fi city"
+    },
+    {
+      "id": "game-3",
+      "description": "Placeholder image for a puzzle game",
+      "imageUrl": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhYnN0cmFjdCUyMHNoYXBlc3xlbnwwfHx8fDE3NjczNTI0NjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract shapes"
+    },
+    {
+      "id": "game-4",
+      "description": "Placeholder image for a racing game",
+      "imageUrl": "https://images.unsplash.com/photo-1623591457240-4be4fb6928dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmYXN0JTIwY2FyfGVufDB8fHx8MTc2NzM4MDAxNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fast car"
+    }
+  ]
 }
