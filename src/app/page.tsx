@@ -44,11 +44,12 @@ async function GamesSection() {
     );
   }
 
-  const translations = {
-    getGame: 'Get Game'
-  };
-
-  return <GameList games={gamesWithData} translations={translations} />;
+  return <GameList initialGameData={{ 
+    "Epic Games Store": gamesWithData.filter(g => g.platform === 'Epic Games Store'),
+    "Amazon Prime Gaming": gamesWithData.filter(g => g.platform === 'Amazon Prime Gaming'),
+    "GOG": gamesWithData.filter(g => g.platform === 'GOG'),
+    "Steam": gamesWithData.filter(g => g.platform === 'Steam'),
+   }} initialError={null} />;
 }
 
 function LoadingGrid() {
@@ -64,21 +65,9 @@ function LoadingGrid() {
 export default function Home() {
   return (
     <main className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 sm:py-12">
-        <header className="mb-8 text-center md:mb-12">
-          <h1 className="font-headline text-4xl font-bold tracking-tighter text-foreground sm:text-5xl md:text-6xl">
-            Daily Game Drop
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Your daily stop for the best free games available right now across PC platforms.
-          </p>
-        </header>
-
-        <Suspense fallback={<LoadingGrid />}>
-          <GamesSection />
-        </Suspense>
-
-      </div>
+      <Suspense fallback={<LoadingGrid />}>
+        <GamesSection />
+      </Suspense>
     </main>
   );
 }

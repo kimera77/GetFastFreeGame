@@ -29,16 +29,28 @@ const getFreeGames = async (input: { platforms: string }): Promise<FreeGame[]> =
     // Replace with actual implementation to fetch game data.
     return [
       {
-        title: 'Example Game 1',
+        title: 'Cyberpunk 2077',
         platform: 'Epic Games Store',
         dealLink: 'https://example.com/game1',
-        imageURL: 'https://example.com/game1.jpg',
+        imageURL: 'https://picsum.photos/seed/1/400/300',
       },
       {
-        title: 'Example Game 2',
+        title: 'Baldur\'s Gate 3',
         platform: 'Steam',
         dealLink: 'https://example.com/game2',
-        imageURL: 'https://example.com/game2.jpg',
+        imageURL: 'https://picsum.photos/seed/2/400/300',
+      },
+       {
+        title: 'Red Dead Redemption 2',
+        platform: 'GOG',
+        dealLink: 'https://example.com/game3',
+        imageURL: 'https://picsum.photos/seed/3/400/300',
+      },
+       {
+        title: 'The Witcher 3: Wild Hunt',
+        platform: 'Amazon Prime Gaming',
+        dealLink: 'https://example.com/game4',
+        imageURL: 'https://picsum.photos/seed/4/400/300',
       },
     ];
 }
