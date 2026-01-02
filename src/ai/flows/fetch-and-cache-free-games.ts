@@ -9,6 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import {googleAI} from '@genkit-ai/google-genai';
 import {z} from 'genkit';
 import { unstable_cache as cache, revalidateTag } from 'next/cache';
 
@@ -56,6 +57,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
   async (input) => {
     const {output} = await ai.generate({
       prompt: fullPrompt,
+      tools: [googleAI.tool.googleSearch()],
       output: {
         schema: FreeGamesOutputSchema,
       },
@@ -96,6 +98,9 @@ export async function fetchAndCacheFreeGames(platforms: string): Promise<FetchGa
   const cacheTime = new Date(data.timestamp);
   const diffInSeconds = (now.getTime() - cacheTime.getTime()) / 1000;
 
+  // This is a heuristic to determine if the data is fresh from the API.
+  // If the data was fetched within the last 5 seconds, we'll consider it "API".
+  // Otherwise, we'll assume it's from the cache.
   const source = diffInSeconds < 5 ? 'API' : 'Cache';
   
   return {
