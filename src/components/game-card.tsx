@@ -27,6 +27,7 @@ export function GameCard({ game, translations }: GameCardProps) {
             src={game.cover_image}
             alt={`Cover art for ${game.name}`}
             fill
+            sizes="(max-width: 640px) 100vw, 192px"
             className="object-cover rounded-md"
           />
         </div>
@@ -41,7 +42,7 @@ export function GameCard({ game, translations }: GameCardProps) {
           </div>
         </div>
         
-        <div className="flex-shrink-0 flex flex-col items-stretch gap-2 w-full sm:w-auto mt-3 sm:mt-0">
+        <div className="flex-shrink-0 flex flex-col items-stretch sm:items-end gap-2 w-full sm:w-auto mt-3 sm:mt-0">
            <div className="flex items-center justify-end gap-2">
             {game.original_price && game.original_price.trim() !== '' && (
                 <span className="text-sm text-muted-foreground line-through">
