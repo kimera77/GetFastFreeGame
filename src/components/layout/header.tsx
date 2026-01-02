@@ -17,18 +17,14 @@ type HeaderProps = {
 
 export function Header({ language, setLanguage }: HeaderProps) {
   return (
-    <header className="py-4 px-4 sm:px-6 lg:px-8 bg-background/80 backdrop-blur-sm sticky top-0 z-40 border-b border-border">
-      <div className="container mx-auto flex justify-between items-center">
-        <div className="flex items-center gap-2">
-           <Globe className="h-6 w-6 text-primary" />
-           <p className="font-headline font-bold text-lg">Daily Game Drop</p>
-        </div>
-        
+    <header className="py-2 px-4 sm:px-6 lg:px-8 absolute top-0 right-0 z-40">
+      <div className="container mx-auto flex justify-end items-center">
         <Select
           value={language}
           onValueChange={(value) => setLanguage(value as Language)}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-auto bg-transparent border-0 gap-2">
+            <Globe className="h-4 w-4 text-muted-foreground" />
             <SelectValue placeholder="Language" />
           </SelectTrigger>
           <SelectContent>

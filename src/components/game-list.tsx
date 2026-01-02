@@ -32,10 +32,10 @@ export function GameList({ initialGameData, initialError }: GameListProps) {
         setLanguage={setLanguage}
       />
       <div className="container mx-auto px-4 pb-16">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-headline font-black text-primary uppercase tracking-widest mb-2">
+        <div className="text-center my-12">
+          <h1 className="text-6xl md:text-8xl font-headline font-bold text-primary uppercase tracking-wider mb-2">
             {t.headerSubtitle}
-          </h2>
+          </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             {t.description}
           </p>
