@@ -10,7 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {unstable_cache} from 'next/cache';
+import {unstable_cache as cache, revalidateTag} from 'next/cache';
 
 const PlatformGamesSchema = z.object({
   title: z.string().describe('The title of the game.'),
@@ -65,7 +65,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
   }
 );
 
-const getCachedGames = unstable_cache(
+const getCachedGames = cache(
   async (platforms: string): Promise<Omit<FetchGamesResult, 'source'>> => {
     console.log('Fetching from API and caching...');
     const games = await fetchFreeGamesFlow({ platforms });
@@ -75,7 +75,10 @@ const getCachedGames = unstable_cache(
       timestamp: new Date().toISOString(),
     };
   },
-  ['free-games-data-v2']
+  ['free-games-data-v2'],
+  {
+    tags: ['free-games-data-v2'],
+  }
 );
 
 export async function fetchAndCacheFreeGames(platforms: string): Promise<FetchGamesResult> {
@@ -85,9 +88,8 @@ export async function fetchAndCacheFreeGames(platforms: string): Promise<FetchGa
   const cacheTime = new Date(data.timestamp);
   const diffInSeconds = (now.getTime() - cacheTime.getTime()) / 1000;
 
-  // If the data is very fresh (e.g., created within the last 2 seconds),
-  // we can assume it came directly from the API call inside unstable_cache.
-  // Otherwise, it was served from the cache.
+  // A very small diff indicates it was just fetched. A larger one means it came from cache.
+  // This is a heuristic, but it's effective for telling the user the source.
   const source = diffInSeconds < 2 ? 'API' : 'Cache';
   
   return {
