@@ -42,19 +42,21 @@ export function GameCard({ game, translations }: GameCardProps) {
           </div>
         </div>
         
-        <div className="flex-shrink-0 flex items-center justify-end gap-2 w-full sm:w-auto mt-3 sm:mt-0">
-           {game.original_price && game.original_price.trim() !== '' && (
-              <span className="text-sm text-muted-foreground line-through">
-                {game.original_price}
-              </span>
-            )}
+        <div className="flex-shrink-0 flex flex-col items-stretch gap-2 w-full sm:w-auto mt-3 sm:mt-0">
+           <div className="flex items-center justify-end gap-2">
+            {game.original_price && game.original_price.trim() !== '' && (
+                <span className="text-sm text-muted-foreground line-through">
+                  {game.original_price}
+                </span>
+              )}
+            <Button asChild variant="default" size="sm" className="w-full sm:w-auto bg-primary hover:bg-primary/80 text-primary-foreground font-bold">
+              <a href={game.game_link} target="_blank" rel="noopener noreferrer">
+                {translations.getGame}
+              </a>
+            </Button>
+           </div>
            <Button onClick={() => setPreviewOpen(true)} variant="outline" size="sm" className="w-full sm:w-auto">
             {translations.gameplayPreview}
-          </Button>
-           <Button asChild variant="default" size="sm" className="w-full sm:w-auto bg-primary hover:bg-primary/80 text-primary-foreground font-bold">
-            <a href={game.game_link} target="_blank" rel="noopener noreferrer">
-              {translations.getGame}
-            </a>
           </Button>
         </div>
       </div>
