@@ -32,11 +32,11 @@ export function GameCard({ game, translations }: GameCardProps) {
         </div>
       <div className="flex-grow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
         <div className="flex-grow">
-          <h2 className="text-xl font-bold font-body text-foreground group-hover:text-primary transition-colors mb-1 cursor-pointer" onClick={() => setPreviewOpen(true)}>
+          <h2 className="text-xl font-bold font-headline text-foreground group-hover:text-primary transition-colors mb-1 cursor-pointer" onClick={() => setPreviewOpen(true)}>
             {game.name}
           </h2>
           <div className="flex items-center gap-2">
-            <PlatformIcon platform={game.platform} className="h-4 w-4" />
+            <PlatformIcon platform={game.platform} className="h-8 w-8" />
             <span className="text-sm font-semibold text-muted-foreground">{game.platform}</span>
           </div>
         </div>
