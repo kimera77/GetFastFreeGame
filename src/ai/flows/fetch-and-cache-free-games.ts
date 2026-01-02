@@ -10,7 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {cache, revalidateTag} from 'next/cache';
+import { unstable_cache as cache, revalidateTag } from 'next/cache';
 
 const PlatformGamesSchema = z.object({
   title: z.string().describe('The title of the game.'),
@@ -77,7 +77,6 @@ const getCachedGames = cache(
       };
     } catch (error) {
         console.error("Error fetching games from API:", error);
-        // Throw the error to be caught by the caller, so it can be displayed in the UI.
         if (error instanceof Error) {
             throw new Error(error.message);
         }
@@ -97,8 +96,6 @@ export async function fetchAndCacheFreeGames(platforms: string): Promise<FetchGa
   const cacheTime = new Date(data.timestamp);
   const diffInSeconds = (now.getTime() - cacheTime.getTime()) / 1000;
 
-  // A very small diff indicates it was just fetched. A larger one means it came from cache.
-  // This is a heuristic, but it's effective for telling the user the source.
   const source = diffInSeconds < 5 ? 'API' : 'Cache';
   
   return {
