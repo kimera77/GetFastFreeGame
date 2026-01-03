@@ -69,6 +69,11 @@ const fetchFreeGamesFlow = ai.defineFlow(
     const {output} = await ai.generate({
       prompt: fullPrompt,
       //tools: [googleAI.tool.googleSearch()],
+      
+      // AÑADE ESTA CONFIGURACIÓN PARA HABILITAR EL "GROUNDING" DE GOOGLE SEARCH
+      config: {
+        tools: [{ googleSearch: {} }],
+      },
       output: {
         schema: FreeGamesOutputSchema,
       },
