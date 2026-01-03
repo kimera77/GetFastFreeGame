@@ -33,14 +33,24 @@ export type FetchGamesResult = {
   timestamp: string;
 };
 
+const ALLOWED_IMAGE_HOSTNAMES = [
+    'cdn.akamai.steamstatic.com',
+    'shared.fastly.steamstatic.com',
+    'cdn1.epicgames.com',
+    'cdn2.unrealengine.com',
+    'images.gog-statics.com',
+    'm.media-amazon.com',
+    'images-na.ssl-images-amazon.com',
+];
+
 const fullPrompt = `Give me the list of free or claimable games available right now on the following platforms: Epic Games Store,Amazon Prime Gaming,GOG,Steam.
     I need the response to be ONLY a raw JSON array, without any additional text, explanations, or markdown formatting like \`\`\`json.
     Each game object in the array must have these exact properties:
     - 'title': The full and exact title of the game (string).
     - 'platform': The platform the game is on, matching one of the requested platforms (string).
     - 'dealLink': The direct URL to the game's store or claim page (string).
-    - 'imageURL': A direct, publicly accessible HTTPS URL for the game's cover art. It must be high quality.
-       VERY IMPORTANT: You MUST ONLY use image URLs from the following allowed domains: cdn.akamai.steamstatic.com, shared.fastly.steamstatic.com, cdn1.epicgames.com, cdn2.unrealengine.com, images.gog-statics.com, m.media-amazon.com, images-na.ssl-images-amazon.com. Do NOT use any other domains like 'www.legacygames.com' or any other. Find an image from the allowed list.
+    - 'imageURL': A direct, publicly accessible HTTPS URL for the game's cover art.
+       VERY IMPORTANT: You MUST ONLY use image URLs from the following allowed domains: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}. Do NOT use any other domains like 'www.legacygames.com' or any other. Find an image from the allowed list. If you cannot find an image from an allowed domain, do not include the game in the list.
     - 'endDate': The date the deal ends in ISO format, if available (string, optional).
     - 'original_price': The standard retail price before the discount (e.g., "$19.99"). This can be an empty string if not applicable or not found (string).
 
@@ -64,7 +74,21 @@ const fetchFreeGamesFlow = ai.defineFlow(
       },
     });
 
-    return output || [];
+    if (!output) {
+        return [];
+    }
+
+    // Filter the results to only include games with allowed image URLs
+    const filteredGames = output.filter(game => {
+        try {
+            const url = new URL(game.imageURL);
+            return ALLOWED_IMAGE_HOSTNAMES.includes(url.hostname);
+        } catch (e) {
+            return false;
+        }
+    });
+
+    return filteredGames;
   }
 );
 
@@ -86,9 +110,9 @@ const getCachedGames = cache(
         throw new Error('An unknown error occurred while fetching games.');
     }
   },
-  ['free-games-data-v2'],
+  ['free-games-data-v3'],
   {
-    tags: ['free-games-data-v2'],
+    tags: ['free-games-data-v3'],
   }
 );
 
