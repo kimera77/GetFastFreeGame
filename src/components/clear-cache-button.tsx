@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button';
 import { clearGamesCache } from '@/app/actions';
 import { Trash2, Loader2, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export function ClearCacheButton() {
   const [isPending, startTransition] = useTransition();
   const [cleared, setCleared] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleClick = () => {
     startTransition(async () => {
@@ -21,6 +23,7 @@ export function ClearCacheButton() {
       setCleared(true);
       // Reset the button state after a short delay
       setTimeout(() => setCleared(false), 2000);
+      // We don't call router.refresh() here to prevent the page from reloading.
     });
   };
 
