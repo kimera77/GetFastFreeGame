@@ -68,7 +68,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
   async (input) => {
     const {output} = await ai.generate({
       prompt: fullPrompt,
-      tools: [googleAI.tool.googleSearch()],
+      //tools: [googleAI.tool.googleSearch()],
       output: {
         schema: FreeGamesOutputSchema,
       },
