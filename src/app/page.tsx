@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ClearCacheButton } from '@/components/clear-cache-button';
 
+export const maxDuration = 120; // 2 minutes
+
 async function GamesSection() {
   let result: FetchGamesResult | null = null;
   let error: Error | null = null;
