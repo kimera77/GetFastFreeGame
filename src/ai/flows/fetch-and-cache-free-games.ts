@@ -73,6 +73,13 @@ const fetchFreeGamesFlow = ai.defineFlow(
     // Step 1: Generate raw text content using search for grounding
     const initialResponse = await ai.generate({
       prompt: initialPromptText,
+      config: {
+        tools: [
+          {
+            googleSearch: {} // Esto activa el grounding nativo de Gemini
+          }
+        ]
+      }
     });
 
     const rawOutput = initialResponse.text ?? '[]';
