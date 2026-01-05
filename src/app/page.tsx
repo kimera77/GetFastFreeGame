@@ -58,7 +58,7 @@ async function GamesSection() {
 }
 
 function DebugInfo({ result }: { result: FetchGamesResult }) {
-  const { source, prompt, games, timestamp } = result;
+  const { source, games, timestamp, initialPrompt, rawOutput, cleanupPrompt } = result;
   const isCache = source === 'Cache';
 
   return (
@@ -92,16 +92,30 @@ function DebugInfo({ result }: { result: FetchGamesResult }) {
           </div>
 
           <div>
-            <h3 className="font-semibold mb-2">Prompt Sent to AI</h3>
+            <h3 className="font-semibold mb-2">Initial Prompt (Step 1)</h3>
             <pre className="p-4 rounded-lg bg-muted/50 text-sm overflow-x-auto">
-              <code>{prompt}</code>
+              <code>{initialPrompt}</code>
+            </pre>
+          </div>
+          
+          <div>
+            <h3 className="font-semibold mb-2">Raw AI Output (Step 1)</h3>
+            <pre className="p-4 rounded-lg bg-muted/50 text-sm max-h-96 overflow-auto">
+              <code>{rawOutput}</code>
             </pre>
           </div>
 
           <Separator />
 
           <div>
-            <h3 className="font-semibold mb-2">JSON Response (as fetched)</h3>
+            <h3 className="font-semibold mb-2">Cleanup Prompt (Step 2)</h3>
+            <pre className="p-4 rounded-lg bg-muted/50 text-sm overflow-x-auto">
+              <code>{cleanupPrompt}</code>
+            </pre>
+          </div>
+          
+          <div>
+            <h3 className="font-semibold mb-2">Final JSON Response (Step 2)</h3>
             <pre className="p-4 rounded-lg bg-muted/50 text-sm max-h-96 overflow-auto">
               <code>{JSON.stringify(games, null, 2)}</code>
             </pre>

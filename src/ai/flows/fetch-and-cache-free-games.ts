@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview This file defines a Genkit flow to fetch and cache free game listings using AI.
+ * @fileOverview This file defines a Genkit flow to fetch and cache free game listings using a two-step AI process.
  *
  * It includes:
  * - fetchAndCacheFreeGames: The main function to fetch and cache free game listings.
@@ -29,8 +29,10 @@ const FreeGamesOutputSchema = z.array(PlatformGamesSchema);
 export type FetchGamesResult = {
   games: FreeGame[];
   source: 'API' | 'Cache';
-  prompt: string;
   timestamp: string;
+  initialPrompt: string;
+  rawOutput: string;
+  cleanupPrompt: string;
 };
 
 const ALLOWED_IMAGE_HOSTNAMES = [
@@ -43,7 +45,17 @@ const ALLOWED_IMAGE_HOSTNAMES = [
     'images-na.ssl-images-amazon.com',
 ];
 
-const fullPrompt = `You are a backend service, not a chat assistant. Your task is to return DATA ONLY. You MUST return a valid JSON array based on real-time web search results for currently free games on the following platforms: Epic Games Store, Amazon Prime Gaming, GOG, Steam. Use Google Search to find real-time information. Do NOT include explanations, comments, markdown, or any text outside the JSON. If you cannot produce valid JSON, return an empty JSON array: []. Schema rules (STRICT): The response MUST start with '[' and end with ']'. Each element MUST be an object with ONLY the following keys: title (string), platform (string: Epic Games Store | Amazon Prime Gaming | GOG | Steam), dealLink (string, valid HTTPS URL), imageURL (string, valid HTTPS URL from allowed domains), endDate (string, ISO 8601 or empty string), original_price (string, may be empty). Image rules (MANDATORY): imageURL MUST be from one of these domains ONLY: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}. If an image URL from the allowed domains cannot be found for a game, that game MUST be excluded from the results. Content rules: Include ONLY games that are currently free or claimable. If a platform has no free games, exclude it entirely. Do NOT guess data. Do NOT hallucinate prices, dates, or links. Return ONLY the JSON array.`;
+const initialPromptText = `You are a backend service, not a chat assistant. Your task is to return DATA ONLY. You MUST return a valid JSON array based on real-time web search results for currently free games on the following platforms: Epic Games Store, Amazon Prime Gaming, GOG, Steam. Use Google Search to find real-time information. Do NOT include explanations, comments, markdown, or any text outside the JSON. If you cannot produce valid JSON, return an empty JSON array: []. Schema rules (STRICT): The response MUST start with '[' and end with ']'. Each element MUST be an object with ONLY the following keys: title (string), platform (string: Epic Games Store | Amazon Prime Gaming | GOG | Steam), dealLink (string, valid HTTPS URL), imageURL (string, valid HTTPS URL from allowed domains), endDate (string, ISO 8601 or empty string), original_price (string, may be empty). Image rules (MANDATORY): imageURL MUST be from one of these domains ONLY: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}. If an image URL from the allowed domains cannot be found for a game, that game MUST be excluded from the results. Content rules: Include ONLY games that are currently free or claimable. If a platform has no free games, exclude it entirely. Do NOT guess data. Do NOT hallucinate prices, dates, or links. Return ONLY the JSON array.`;
+
+const cleanupPromptText = `You are a data sanitation service. Your only task is to take the following text and convert it into a valid JSON array of objects.
+- Ensure the final output is ONLY the JSON array and nothing else.
+- Correct any formatting errors.
+- Do not add, remove, or change any data, just fix the structure.
+- If the input is empty or contains no valid data, return an empty array [].
+- The response MUST start with '[' and end with ']'.
+
+Input text to clean:
+`;
 
 const fetchFreeGamesFlow = ai.defineFlow(
   {
@@ -51,24 +63,38 @@ const fetchFreeGamesFlow = ai.defineFlow(
     inputSchema: z.object({
       platforms: z.string().describe('The platforms to search for free games on (e.g., Epic Games Store, Amazon Prime Gaming, GOG, Steam). Separate with commas if multiple).'),
     }),
-    outputSchema: FreeGamesOutputSchema,
+    outputSchema: z.object({
+        games: FreeGamesOutputSchema,
+        initialPrompt: z.string(),
+        rawOutput: z.string(),
+        cleanupPrompt: z.string(),
+    }),
   },
   async (input) => {
-    const {output} = await ai.generate({
-      prompt: fullPrompt,
+    // Step 1: Generate raw text content using search
+    const initialResponse = await ai.generate({
+      prompt: initialPromptText,
       model: 'googleai/gemini-2.5-flash',
       tools: [googleAI.tool.googleSearch()],
-      output: {
-        schema: FreeGamesOutputSchema,
-      },
     });
 
-    if (!output) {
-        return [];
-    }
+    const rawOutput = initialResponse.text ?? '[]';
+
+    // Step 2: Clean up the raw text and format it as valid JSON
+    const finalPrompt = cleanupPromptText + rawOutput;
+    
+    const { output: finalOutput } = await ai.generate({
+        prompt: finalPrompt,
+        model: 'googleai/gemini-2.5-flash',
+        output: {
+            schema: FreeGamesOutputSchema,
+        },
+    });
+
+    const games = finalOutput || [];
 
     // Filter the results to only include games with allowed image URLs
-    const filteredGames = output.filter(game => {
+    const filteredGames = games.filter(game => {
         try {
             const url = new URL(game.imageURL);
             return ALLOWED_IMAGE_HOSTNAMES.includes(url.hostname);
@@ -77,7 +103,12 @@ const fetchFreeGamesFlow = ai.defineFlow(
         }
     });
 
-    return filteredGames;
+    return {
+        games: filteredGames,
+        initialPrompt: initialPromptText,
+        rawOutput: rawOutput,
+        cleanupPrompt: finalPrompt,
+    };
   }
 );
 
@@ -85,10 +116,9 @@ const getCachedGames = cache(
   async (platforms: string): Promise<Omit<FetchGamesResult, 'source'>> => {
     console.log('Fetching from API and caching...');
     try {
-      const games = await fetchFreeGamesFlow({ platforms });
+      const result = await fetchFreeGamesFlow({ platforms });
       return {
-        games,
-        prompt: fullPrompt,
+        ...result,
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
