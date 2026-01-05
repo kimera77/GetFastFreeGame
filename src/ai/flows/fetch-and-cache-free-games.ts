@@ -11,8 +11,6 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import { unstable_cache as cache, revalidateTag } from 'next/cache';
-import { googleSearch } from '@genkit-ai/google-genai';
-
 
 const PlatformGamesSchema = z.object({
   title: z.string().describe('The title of the game.'),
@@ -72,10 +70,9 @@ const fetchFreeGamesFlow = ai.defineFlow(
     }),
   },
   async (input) => {
-    // Step 1: Generate raw text content using search
+    // Step 1: Generate raw text content using search for grounding
     const initialResponse = await ai.generate({
       prompt: initialPromptText,
-      tools: [googleSearch],
     });
 
     const rawOutput = initialResponse.text ?? '[]';
