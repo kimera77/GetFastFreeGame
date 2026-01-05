@@ -83,7 +83,6 @@ const fetchFreeGamesFlow = ai.defineFlow(
     // Step 1: Generate raw text content using search
     const initialResponse = await ai.generate({
       prompt: initialPromptText,
-      model: 'googleai/gemini-1.5-flash',
       tools: [gameDealsSearch],
     });
 
@@ -94,7 +93,6 @@ const fetchFreeGamesFlow = ai.defineFlow(
     
     const { output: finalOutput } = await ai.generate({
         prompt: finalPrompt,
-        model: 'googleai/gemini-1.5-flash',
         output: {
             schema: FreeGamesOutputSchema,
         },
