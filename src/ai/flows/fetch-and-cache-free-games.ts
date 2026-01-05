@@ -9,7 +9,6 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {googleAI} from '@genkit-ai/google-genai';
 import {z} from 'genkit';
 import { unstable_cache as cache, revalidateTag } from 'next/cache';
 
@@ -47,7 +46,7 @@ const fullPrompt = `You are a backend service, not a chat assistant.
 
 Your task is to return DATA ONLY.
 
-You MUST return a valid JSON array based on real-time web search results.
+You MUST return a valid JSON array based on real-time web search results for currently free games on the following platforms: {{{platforms}}}.
 Do NOT include explanations, comments, markdown, or any text outside the JSON.
 Do NOT wrap the response in \`\`\`json or any other formatting.
 
@@ -59,20 +58,18 @@ Schema rules (STRICT):
   - title (string)
   - platform (string: Epic Games Store | Amazon Prime Gaming | GOG | Steam)
   - dealLink (string, valid HTTPS URL)
-  - imageURL (string, valid HTTPS URL)
+  - imageURL (string, valid HTTPS URL from allowed domains)
   - endDate (string, ISO 8601 or empty string)
   - original_price (string, may be empty)
 
 Image rules (MANDATORY):
-- imageURL MUST be from one of these domains ONLY:  ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}
-
-If an image URL from the allowed domains cannot be found, the game MUST be excluded.
+- imageURL MUST be from one of these domains ONLY: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}
+- If an image URL from the allowed domains cannot be found for a game, that game MUST be excluded from the results.
 
 Content rules:
 - Include ONLY games that are currently free or claimable.
 - If a platform has no free games, exclude it entirely.
-- Do NOT guess data.
-- Do NOT hallucinate prices, dates, or links.
+- Do NOT guess data. Do NOT hallucinate prices, dates, or links.
 
 Return ONLY the JSON array.`;
 
@@ -87,17 +84,20 @@ const fetchFreeGamesFlow = ai.defineFlow(
   async (input) => {
     const {output} = await ai.generate({
       prompt: fullPrompt,
-      // This config enables Google Search "grounding" without conflicting with JSON output mode.
+      model: 'googleai/gemini-2.5-flash',
       config: {
         tool_config: {
-            googleSearch: {
-              grounding: 'STATIC'
-            }
+          googleSearch: {
+            grounding: 'STATIC'
+          }
         }
       },
       output: {
         schema: FreeGamesOutputSchema,
       },
+      input: {
+        platforms: input.platforms,
+      }
     });
 
     if (!output) {
