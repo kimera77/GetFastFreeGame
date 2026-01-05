@@ -9,7 +9,8 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z, search} from 'genkit';
+import {z} from 'genkit';
+import {googleSearch} from '@genkit-ai/google-genai';
 import { unstable_cache as cache, revalidateTag } from 'next/cache';
 
 const PlatformGamesSchema = z.object({
@@ -56,16 +57,6 @@ const cleanupPromptText = `You are a data sanitation service. Your only task is 
 Input text to clean:
 `;
 
-const gameDealsSearch = ai.defineTool(
-    {
-      name: 'gameDealsSearch',
-      description: 'Search for current deals and free games on platforms like Steam, Epic Games, GOG, and Prime Gaming.',
-      inputSchema: z.object({ query: z.string() }),
-      outputSchema: z.any(),
-    },
-    async (input) => search(input.query)
-);
-
 const fetchFreeGamesFlow = ai.defineFlow(
   {
     name: 'fetchFreeGamesFlow',
@@ -83,7 +74,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
     // Step 1: Generate raw text content using search
     const initialResponse = await ai.generate({
       prompt: initialPromptText,
-      tools: [gameDealsSearch],
+      tools: [googleSearch],
     });
 
     const rawOutput = initialResponse.text ?? '[]';
