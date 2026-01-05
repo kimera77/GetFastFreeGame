@@ -43,19 +43,38 @@ const ALLOWED_IMAGE_HOSTNAMES = [
     'images-na.ssl-images-amazon.com',
 ];
 
-const fullPrompt = `Give me the list of free or claimable games available right now on the following platforms: Epic Games Store,Amazon Prime Gaming,GOG,Steam.
-    I need the response to be ONLY a raw JSON array, without any additional text, explanations, or markdown formatting like \`\`\`json.
-    Each game object in the array must have these exact properties:
-    - 'title': The full and exact title of the game (string).
-    - 'platform': The platform the game is on, matching one of the requested platforms (string).
-    - 'dealLink': The direct URL to the game's store or claim page (string).
-    - 'imageURL': A direct, publicly accessible HTTPS URL for the game's cover art.
-       VERY IMPORTANT: You MUST ONLY use image URLs from the following allowed domains: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}. Do NOT use any other domains like 'www.legacygames.com' or any other. Find an image from the allowed list. If you cannot find an image from an allowed domain, do not include the game in the list.
-    - 'endDate': The date the deal ends in ISO format, if available (string, optional).
-    - 'original_price': The standard retail price before the discount (e.g., "$19.99"). This can be an empty string if not applicable or not found (string).
+const fullPrompt = `You are a backend service, not a chat assistant.
 
-    If a platform has no free games, do not include it.
-    Your entire response must be just the JSON array, starting with [ and ending with ].`;
+Your task is to return DATA ONLY.
+
+You MUST return a valid JSON array based on real-time web search results.
+Do NOT include explanations, comments, markdown, or any text outside the JSON.
+Do NOT wrap the response in \`\`\`json or any other formatting.
+
+If you cannot produce valid JSON, return an empty JSON array: []
+
+Schema rules (STRICT):
+- The response MUST start with '[' and end with ']'.
+- Each element MUST be an object with ONLY the following keys:
+  - title (string)
+  - platform (string: Epic Games Store | Amazon Prime Gaming | GOG | Steam)
+  - dealLink (string, valid HTTPS URL)
+  - imageURL (string, valid HTTPS URL)
+  - endDate (string, ISO 8601 or empty string)
+  - original_price (string, may be empty)
+
+Image rules (MANDATORY):
+- imageURL MUST be from one of these domains ONLY:  ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}
+
+If an image URL from the allowed domains cannot be found, the game MUST be excluded.
+
+Content rules:
+- Include ONLY games that are currently free or claimable.
+- If a platform has no free games, exclude it entirely.
+- Do NOT guess data.
+- Do NOT hallucinate prices, dates, or links.
+
+Return ONLY the JSON array.`;
 
 const fetchFreeGamesFlow = ai.defineFlow(
   {
@@ -68,9 +87,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
   async (input) => {
     const {output} = await ai.generate({
       prompt: fullPrompt,
-      //tools: [googleAI.tool.googleSearch()],
-      
-      // AÑADE ESTA CONFIGURACIÓN PARA HABILITAR EL "GROUNDING" DE GOOGLE SEARCH
+      // This config enables Google Search "grounding" without conflicting with JSON output mode.
       config: {
         tools: [{ googleSearch: {} }],
       },
