@@ -89,7 +89,11 @@ const fetchFreeGamesFlow = ai.defineFlow(
       prompt: fullPrompt,
       // This config enables Google Search "grounding" without conflicting with JSON output mode.
       config: {
-        tools: [{ googleSearch: {} }],
+        tool_config: {
+            googleSearch: {
+              grounding: 'STATIC'
+            }
+        }
       },
       output: {
         schema: FreeGamesOutputSchema,
