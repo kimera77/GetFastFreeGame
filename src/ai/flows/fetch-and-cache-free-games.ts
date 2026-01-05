@@ -10,7 +10,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 import { unstable_cache as cache, revalidateTag } from 'next/cache';
 
 const PlatformGamesSchema = z.object({
@@ -75,7 +74,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
     const initialResponse = await ai.generate({
       prompt: initialPromptText,
       model: 'googleai/gemini-2.5-flash',
-      tools: [googleAI.tool.googleSearch()],
+      tools: ['google/googleSearch'],
     });
 
     const rawOutput = initialResponse.text ?? '[]';
