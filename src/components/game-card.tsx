@@ -24,16 +24,13 @@ export function GameCard({ game, translations }: GameCardProps) {
   if (game.endDate && game.endDate.trim() !== '') {
     try {
       const parsedDate = parseISO(game.endDate);
-      // Check if the parsed date is valid before formatting
       if (!isNaN(parsedDate.getTime())) {
         formattedEndDate = format(parsedDate, 'MMM d, yyyy');
       }
     } catch (error) {
-      // If parsing fails for any reason, keep formattedEndDate as null
       console.error(`Invalid date value for game "${game.name}":`, game.endDate);
     }
   }
-
 
   return (
     <>
@@ -78,15 +75,17 @@ export function GameCard({ game, translations }: GameCardProps) {
                   <span>{formattedEndDate}</span>
                 </div>
               )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setVideoPlayerOpen(true)}
-                disabled={!game.gameplay_url}
-              >
-                <PlayCircle className="mr-2 h-4 w-4" />
-                Gameplay
-              </Button>
+              {game.gameplay_url && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setVideoPlayerOpen(true)}
+                  disabled={!game.gameplay_url}
+                >
+                  <PlayCircle className="mr-2 h-4 w-4" />
+                  Gameplay
+                </Button>
+              )}
             </div>
           </div>
         </div>
