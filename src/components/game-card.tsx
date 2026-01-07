@@ -20,9 +20,10 @@ type GameCardProps = {
 export function GameCard({ game, translations }: GameCardProps) {
   const [isVideoPlayerOpen, setVideoPlayerOpen] = useState(false);
 
-  const formattedEndDate = game.endDate
-    ? format(parseISO(game.endDate), 'MMM d, yyyy')
-    : null;
+  const formattedEndDate =
+    game.endDate && game.endDate.trim() !== ''
+      ? format(parseISO(game.endDate), 'MMM d, yyyy')
+      : null;
 
   return (
     <>
