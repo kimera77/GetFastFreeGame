@@ -19,7 +19,7 @@ const PlatformGamesSchema = z.object({
   imageURL: z.string().url().describe('Direct URL to the game image.'),
   endDate: z.string().optional().describe('The date the deal ends, if applicable, in ISO format.'),
   original_price: z.string().optional().describe('The standard retail price before the discount (e.g., "$19.99"). This can be an empty string if not applicable or not found.'),
-  gameplay: z.string().url().optional().describe('A YouTube URL for the game gameplay.'),
+  gameplay: z.string().url().optional().describe('A first YouTube URL for the gameplay video for each videogame.'),
 });
 
 export type FreeGame = z.infer<typeof PlatformGamesSchema>;

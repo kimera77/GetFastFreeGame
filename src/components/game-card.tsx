@@ -25,7 +25,7 @@ export function GameCard({ game, translations }: GameCardProps) {
     try {
       const parsedDate = parseISO(game.endDate);
       if (!isNaN(parsedDate.getTime())) {
-        formattedEndDate = format(parsedDate, 'MMM d, yyyy');
+        formattedEndDate = format(parsedDate, 'd MMMM yyyy');
       }
     } catch (error) {
       console.error(`Invalid date value for game "${game.name}":`, game.endDate);
