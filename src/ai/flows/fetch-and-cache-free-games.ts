@@ -148,13 +148,13 @@ const fetchFreeGamesFlow = ai.defineFlow(
     const rawOutput = initialResponse.text ?? '[]';
     
     // DEBUG: Bypass Step 2 (Cleanup) and use raw output directly
-    let games = [];
+    let games: FreeGame[] = [];
     let cleanupPromptForDebug = 'Cleanup step bypassed for debugging.';
     try {
         // Attempt to parse the raw output directly
         let jsonString = rawOutput;
         const jsonStartIndex = rawOutput.indexOf('[');
-        const jsonEndIndex = rawOutput.lastIndexOf(']');
+        const jsonEndIndex = raw.lastIndexOf(']');
         if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
             jsonString = rawOutput.substring(jsonStartIndex, jsonEndIndex + 1);
         }
@@ -183,7 +183,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
 
 
     // Filter the results to only include games with allowed image URLs
-    const filteredGames = games.filter(game => {
+    const filteredGames = games.filter((game: FreeGame) => {
         try {
             if (!game.imageURL) return false;
             const url = new URL(game.imageURL);
