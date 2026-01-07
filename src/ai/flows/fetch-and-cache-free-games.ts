@@ -44,7 +44,9 @@ const ALLOWED_IMAGE_HOSTNAMES = [
     'images-na.ssl-images-amazon.com',
 ];
 
-const initialPromptText = `The goal is to claim games that are available for a limited time only.
+const initialPromptText = `You are a backend service, not a chat assistant. Your task is to return DATA ONLY. You MUST return a valid JSON array based on real-time web search results for currently free games on the following platforms: Epic Games Store, Amazon Prime Gaming, GOG, Steam. Use Google Search to find real-time information. Do NOT include explanations, comments, markdown, or any text outside the JSON. If you cannot produce valid JSON, return an empty JSON array: []. Schema rules (STRICT): The response MUST start with '[' and end with ']'. Each element MUST be an object with ONLY the following keys: title (string), platform (string: Epic Games Store | Amazon Prime Gaming | GOG | Steam), dealLink (string, valid HTTPS URL), imageURL (string, valid HTTPS URL from allowed domains), endDate (string, ISO 8601 or empty string), original_price (string, may be empty). Image rules (MANDATORY): imageURL MUST be from one of these domains ONLY: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}. If an image URL from the allowed domains cannot be found for a game, that game MUST be excluded from the results. Content rules: Include ONLY games that are currently free or claimable. If a platform has no free games, exclude it entirely. Do NOT guess data. Do NOT hallucinate prices, dates, or links. Return ONLY the JSON array.`;
+
+/*const initialPromptText = `The goal is to claim games that are available for a limited time only.
 
 This excludes games that are always free, trials, betas, games you can play for a while and then can't anymore, and demos.
 
@@ -107,7 +109,7 @@ There is no dedicated website for GOG games, although it always starts with http
 3.  **Errors:** If you cannot produce a valid array of objects that follow **all** the rules, return an empty JSON array: \`[]\`.
 
 Return ONLY the JSON array.`;
-
+*/
 
 const cleanupPromptText = `You are a data sanitation service. Your only task is to take the following text and convert it into a valid JSON array of objects.
 - Ensure the final output is ONLY the JSON array and nothing else.
