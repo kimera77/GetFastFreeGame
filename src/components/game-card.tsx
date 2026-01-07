@@ -59,7 +59,7 @@ export function GameCard({ game, translations }: GameCardProps) {
             {formattedEndDate && (
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <CalendarClock className="h-3.5 w-3.5" />
-                <span>Ends {formattedEndDate}</span>
+                <span>{formattedEndDate}</span>
               </div>
             )}
             <Button variant="outline" size="sm">
