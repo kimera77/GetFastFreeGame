@@ -44,7 +44,70 @@ const ALLOWED_IMAGE_HOSTNAMES = [
     'images-na.ssl-images-amazon.com',
 ];
 
-const initialPromptText = `You are a backend service, not a chat assistant. Your task is to return DATA ONLY. You MUST return a valid JSON array based on real-time web search results for currently free games on the following platforms: Epic Games Store, Amazon Prime Gaming, GOG, Steam. Use Google Search to find real-time information. Do NOT include explanations, comments, markdown, or any text outside the JSON. If you cannot produce valid JSON, return an empty JSON array: []. Schema rules (STRICT): The response MUST start with '[' and end with ']'. Each element MUST be an object with ONLY the following keys: title (string), platform (string: Epic Games Store | Amazon Prime Gaming | GOG | Steam), dealLink (string, valid HTTPS URL), imageURL (string, valid HTTPS URL from allowed domains), endDate (string, ISO 8601 or empty string), original_price (string, may be empty). Image rules (MANDATORY): imageURL MUST be from one of these domains ONLY: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}. If an image URL from the allowed domains cannot be found for a game, that game MUST be excluded from the results. Content rules: Include ONLY games that are currently free or claimable. If a platform has no free games, exclude it entirely. Do NOT guess data. Do NOT hallucinate prices, dates, or links. Return ONLY the JSON array.`;
+const initialPromptText = `The goal is to claim games that are available for a limited time only.
+
+This excludes games that are always free, trials, betas, games you can play for a while and then can't anymore, and demos.
+
+The games must be available for a limited time to claim and keep forever.
+
+The games to claim must be from these platforms: Steam, GOG, Epic Games, and Amazon Gaming (Luna). it's mandatory search games for this 4 platforms
+
+
+
+For your search for games on Amazon, primarily rely on this website: https://luna.amazon.com/claims/.
+
+for games Steam, strictly check https://steamdb.info/upcoming/free/ for games labeled "Free Sub/Promo" or "Free on Demand" that are in the "Keep forever" category. Also use this website: https://store.steampowered.com/specials. Make sure they are not permanently Free-to-Play.
+
+For Epic Games titles, refer to this website: https://store.epicgames.com/en-US/free-games.
+
+There is no dedicated website for GOG games, although it always starts with https://www.gog.com/
+
+
+
+---
+
+
+
+### Data Mapping and Link Accuracy Rules
+
+
+
+1.  **Platform (STRICT):** The platform key **MUST** clearly state the platform *where the game is claimed* (e.g., if the game is claimed via Amazon Prime Gaming, but is a Steam key, the platform should be 'Amazon Prime Gaming' because that is the claiming source). Use ONLY the allowed values: 'Epic Games Store', 'Amazon Prime Gaming', 'GOG', or 'Steam'.
+
+2.  **dealLink (CRITICAL):** This **MUST** be the **DIRECT HTTPS URL** that leads the user to the specific game's claiming page. It must be the most direct link to claim or add the game to the library.
+
+3.  **imageURL (MANDATORY):** This **MUST** be a valid HTTPS URL for the game's official artwork. The URL **MUST** strictly belong to one of the allowed hostnames: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}. If a valid image URL from the allowed list cannot be found, the game **MUST BE EXCLUDED**. **The imageURL domain is independent of the platform domain.**
+
+
+
+---
+
+
+
+### Output Format Rules (STRICT JSON)
+
+
+
+1.  **JSON ONLY:** Your entire response **MUST** be a single, valid JSON array. Do not include any explanations, markdown (like \`\`\`json), comments, or text outside the JSON structure.
+
+2.  **Schema (STRICT):** The JSON array elements **MUST** strictly adhere to this schema:
+
+    * "title" (string)
+
+    * "platform" (string: one of the allowed platforms above)
+
+    * "dealLink" (string, valid HTTPS URL)
+
+    * "imageURL" (string, valid HTTPS URL from allowed domains)
+
+    * "endDate" (string, ISO 8601 format or empty string \`""\`)
+
+    * "original_price" (string, may be empty \`""\` or use format like "$19.99")
+
+3.  **Errors:** If you cannot produce a valid array of objects that follow **all** the rules, return an empty JSON array: \`[]\`.
+
+Return ONLY the JSON array.`;
+
 
 const cleanupPromptText = `You are a data sanitation service. Your only task is to take the following text and convert it into a valid JSON array of objects.
 - Ensure the final output is ONLY the JSON array and nothing else.
