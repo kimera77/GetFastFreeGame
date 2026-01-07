@@ -27,7 +27,8 @@ async function GamesSection() {
     platform: game.platform,
     game_link: game.dealLink,
     cover_image: game.imageURL,
-    original_price: game.original_price
+    original_price: game.original_price,
+    endDate: game.endDate,
   })) || [];
 
   const platformGames = {

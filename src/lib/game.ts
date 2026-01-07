@@ -3,4 +3,5 @@ export type Game = {
   cover_image: string;
   original_price?: string;
   game_link: string;
+  endDate?: string;
 };

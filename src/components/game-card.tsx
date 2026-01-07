@@ -5,6 +5,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlatformIcon } from '@/components/icons/platform-icon';
 import type { Game } from '@/lib/game';
+import { CalendarClock } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
 
 type GameCardProps = {
   game: Game & { platform: string };
@@ -14,6 +16,10 @@ type GameCardProps = {
 };
 
 export function GameCard({ game, translations }: GameCardProps) {
+  const formattedEndDate = game.endDate
+    ? format(parseISO(game.endDate), 'MMM d, yyyy')
+    : null;
+
   return (
     <Card className="flex flex-col sm:flex-row items-center p-4 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30 bg-card/80 backdrop-blur-sm border-border/30 w-full group">
        <div className="flex-shrink-0 w-full sm:w-48 h-32 sm:h-24 relative mb-4 sm:mb-0 sm:mr-4">
@@ -49,9 +55,17 @@ export function GameCard({ game, translations }: GameCardProps) {
               </a>
             </Button>
           </div>
-          <Button variant="outline" size="sm">
-            Gameplay
-          </Button>
+          <div className="flex items-center justify-end gap-4 w-full">
+            {formattedEndDate && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <CalendarClock className="h-3.5 w-3.5" />
+                <span>Ends {formattedEndDate}</span>
+              </div>
+            )}
+            <Button variant="outline" size="sm">
+              Gameplay
+            </Button>
+          </div>
         </div>
       </div>
     </Card>

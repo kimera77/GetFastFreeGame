@@ -5,7 +5,7 @@ const googleAI = googleAIPlugin();
 
 export const ai = genkit({
   plugins: [googleAI],
-  model: 'googleai/gemini-2.0-flash',
+  //model: 'googleai/gemini-2.0-flash',
   //model: 'googleai/gemini-2.5-flash',
-  //model: 'googleai/gemini-3-flash-preview',
+  model: 'googleai/gemini-3-flash-preview',
 });
