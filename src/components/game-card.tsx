@@ -20,10 +20,20 @@ type GameCardProps = {
 export function GameCard({ game, translations }: GameCardProps) {
   const [isVideoPlayerOpen, setVideoPlayerOpen] = useState(false);
 
-  const formattedEndDate =
-    game.endDate && game.endDate.trim() !== ''
-      ? format(parseISO(game.endDate), 'MMM d, yyyy')
-      : null;
+  let formattedEndDate: string | null = null;
+  if (game.endDate && game.endDate.trim() !== '') {
+    try {
+      const parsedDate = parseISO(game.endDate);
+      // Check if the parsed date is valid before formatting
+      if (!isNaN(parsedDate.getTime())) {
+        formattedEndDate = format(parsedDate, 'MMM d, yyyy');
+      }
+    } catch (error) {
+      // If parsing fails for any reason, keep formattedEndDate as null
+      console.error(`Invalid date value for game "${game.name}":`, game.endDate);
+    }
+  }
+
 
   return (
     <>
