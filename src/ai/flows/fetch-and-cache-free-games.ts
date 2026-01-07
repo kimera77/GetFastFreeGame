@@ -154,7 +154,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
         // Attempt to parse the raw output directly
         let jsonString = rawOutput;
         const jsonStartIndex = rawOutput.indexOf('[');
-        const jsonEndIndex = raw.lastIndexOf(']');
+        const jsonEndIndex = rawOutput.lastIndexOf(']');
         if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
             jsonString = rawOutput.substring(jsonStartIndex, jsonEndIndex + 1);
         }
