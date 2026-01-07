@@ -146,7 +146,28 @@ const fetchFreeGamesFlow = ai.defineFlow(
     });
 
     const rawOutput = initialResponse.text ?? '[]';
+    
+    // DEBUG: Bypass Step 2 (Cleanup) and use raw output directly
+    let games = [];
+    let cleanupPromptForDebug = 'Cleanup step bypassed for debugging.';
+    try {
+        // Attempt to parse the raw output directly
+        let jsonString = rawOutput;
+        const jsonStartIndex = rawOutput.indexOf('[');
+        const jsonEndIndex = rawOutput.lastIndexOf(']');
+        if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
+            jsonString = rawOutput.substring(jsonStartIndex, jsonEndIndex + 1);
+        }
+        games = JSON.parse(jsonString);
+    } catch (e) {
+        console.error("Failed to parse raw output as JSON:", e);
+        console.error("Raw output was:", rawOutput);
+        games = []; // Return empty array on parsing failure
+        cleanupPromptForDebug = `Cleanup step bypassed. FAILED TO PARSE RAW OUTPUT. Error: ${e instanceof Error ? e.message : String(e)}`;
+    }
 
+
+    /*
     // Step 2: Clean up the raw text and format it as valid JSON
     const finalPrompt = cleanupPromptText + rawOutput;
     
@@ -158,10 +179,13 @@ const fetchFreeGamesFlow = ai.defineFlow(
     });
 
     const games = finalOutput || [];
+    */
+
 
     // Filter the results to only include games with allowed image URLs
     const filteredGames = games.filter(game => {
         try {
+            if (!game.imageURL) return false;
             const url = new URL(game.imageURL);
             return ALLOWED_IMAGE_HOSTNAMES.includes(url.hostname);
         } catch (e) {
@@ -173,7 +197,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
         games: filteredGames,
         initialPrompt: initialPromptText,
         rawOutput: rawOutput,
-        cleanupPrompt: finalPrompt,
+        cleanupPrompt: cleanupPromptForDebug, // Using the debug prompt
     };
   }
 );
