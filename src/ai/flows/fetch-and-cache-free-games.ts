@@ -19,6 +19,7 @@ const PlatformGamesSchema = z.object({
   imageURL: z.string().url().describe('Direct URL to the game image.'),
   endDate: z.string().optional().describe('The date the deal ends, if applicable, in ISO format.'),
   original_price: z.string().optional().describe('The standard retail price before the discount (e.g., "$19.99"). This can be an empty string if not applicable or not found.'),
+  gameplay: z.string().url().optional().describe('A YouTube URL for the game gameplay.'),
 });
 
 export type FreeGame = z.infer<typeof PlatformGamesSchema>;
@@ -44,8 +45,6 @@ const ALLOWED_IMAGE_HOSTNAMES = [
     'images-na.ssl-images-amazon.com',
 ];
 
-//const initialPromptText = `You are a backend service, not a chat assistant. Your task is to return DATA ONLY. You MUST return a valid JSON array based on real-time web search results for currently free games on the following platforms: Epic Games Store, Amazon Prime Gaming, GOG, Steam. Use Google Search to find real-time information. Do NOT include explanations, comments, markdown, or any text outside the JSON. If you cannot produce valid JSON, return an empty JSON array: []. Schema rules (STRICT): The response MUST start with '[' and end with ']'. Each element MUST be an object with ONLY the following keys: title (string), platform (string: Epic Games Store | Amazon Prime Gaming | GOG | Steam), dealLink (string, valid HTTPS URL), imageURL (string, valid HTTPS URL from allowed domains), endDate (string, ISO 8601 or empty string), original_price (string, may be empty). Image rules (MANDATORY): imageURL MUST be from one of these domains ONLY: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}. If an image URL from the allowed domains cannot be found for a game, that game MUST be excluded from the results. Content rules: Include ONLY games that are currently free or claimable. If a platform has no free games, exclude it entirely. Do NOT guess data. Do NOT hallucinate prices, dates, or links. Return ONLY the JSON array.`;
-
 const initialPromptText = `You are a backend service, not a chat assistant. Your task is to return DATA ONLY. You MUST return a valid JSON array based on real-time web search results for games.
 
 Search and Content Rules (STRICT):
@@ -56,7 +55,7 @@ Search and Content Rules (STRICT):
 5. Do NOT guess data. Do NOT hallucinate prices, dates, or links.
 
 Schema Rules (STRICT):
-The response MUST start with '[' and end with ']'. Each element MUST be an object with ONLY the following keys: title, platform, dealLink, imageURL, endDate, original_price.
+The response MUST start with '[' and end with ']'. Each element MUST be an object with ONLY the following keys: title, platform, dealLink, imageURL, endDate, original_price, gameplay.
 
 Platform Key: MUST use one of these exact strings: 'Epic Games Store', 'Amazon Prime Gaming', 'GOG', 'Steam'.
 
@@ -64,6 +63,9 @@ Image Rules (MANDATORY):
 1. imageURL MUST be from one of these allowed domains ONLY: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}.
 2. **HIGH ACCURACY:** To prevent image errors (e.g., incorrect Steam IDs), if the game exists on Steam, you MUST find and use the **verified Steam App ID** to construct the URL: https://cdn.akamai.steamstatic.com/steam/apps/[ID]/header.jpg.
 3. If a valid, high-accuracy image URL from the allowed domains cannot be found or verified, that game MUST be excluded.
+
+Gameplay rules:
+give a url ( no more and no less) from youtube for videogame gameplay.
 
 Do NOT include explanations, comments, markdown, or any text outside the JSON. Return ONLY the JSON array.`;
 
