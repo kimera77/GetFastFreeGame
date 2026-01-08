@@ -76,6 +76,12 @@ export function GameList({ initialGameData, initialError }: GameListProps) {
             )}
           </div>
         )}
+
+        <div className="mt-12 text-center text-sm text-muted-foreground">
+          <p>
+            <em>* {t.aiDisclaimer}</em>
+          </p>
+        </div>
       </div>
     </>
   );

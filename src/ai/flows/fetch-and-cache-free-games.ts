@@ -64,9 +64,14 @@ Image Rules (MANDATORY):
 2. **HIGH ACCURACY:** To prevent image errors (e.g., incorrect Steam IDs), if the game exists on Steam, you MUST find and use the **verified Steam App ID** to construct the URL: https://cdn.akamai.steamstatic.com/steam/apps/[ID]/header.jpg.
 3. If a valid, high-accuracy image URL from the allowed domains cannot be found or verified, that game MUST be excluded.
 
-Gameplay rules:
-give a url ( no more and no less) from youtube for videogame gameplay.
-
+Gameplay Rules (STRICT):
+1. URL Source: The value for 'gameplay' MUST be a direct, single YouTube video URL (https://www.youtube.com/watch?v=...).
+2. STABLE LINK SEARCH: For each game, you MUST perform a Google Search query for "youtube [Game Title] Gameplay".
+3. **VETTING & LONGEVITY (MANDATORY HIERARCHY):** The selected URL MUST satisfy the following conditions, strictly in this order of priority:
+    a. **Stability & Authority Priority (P1):** The video MUST be from a **verified, high-authority channel** (Official Developer/Publisher, IGN, GameSpot, PC Gamer, etc.). Videos from these channels are prioritized even if they are not the #1 search result.
+    b. **Substantial Footage (P2):** The video MUST have a duration of **over 5 minutes** to ensure it is substantial, unedited gameplay footage, not a short cinematic trailer or cutscene.
+    c. **Top Result Vetting (P3):** If multiple authoritative links exist, use the highest-ranking one. If the #1 search result does not meet P1 or P2, the search must proceed to vet the next result (2nd, 3rd, etc.) until a link is found that meets P1 and P2.
+4. EXCLUSION: Links to channels, playlists (URLs containing 'list='), short cinematic trailers, cutscenes, or videos from unknown/small user accounts are forbidden. The video must be pure in-game action.
 Do NOT include explanations, comments, markdown, or any text outside the JSON. Return ONLY the JSON array.`;
 
 const cleanupPromptText = `You are a data sanitation service. Your only task is to take the following text and convert it into a valid JSON array of objects.
@@ -76,8 +81,7 @@ const cleanupPromptText = `You are a data sanitation service. Your only task is 
 - If the input is empty or contains no valid data, return an empty array [].
 - The response MUST start with '[' and end with ']'.
 
-Input text to clean:
-`;
+Input text to clean:`;
 
 const fetchFreeGamesFlow = ai.defineFlow(
   {
