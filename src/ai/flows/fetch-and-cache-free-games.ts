@@ -9,7 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
 import { unstable_cache as cache, revalidateTag } from 'next/cache';
 
 const PlatformGamesSchema = z.object({
@@ -32,7 +32,6 @@ export type FetchGamesResult = {
   timestamp: string;
   initialPrompt: string;
   rawOutput: string;
-  cleanupPrompt: string;
 };
 
 const ALLOWED_IMAGE_HOSTNAMES = [
@@ -74,15 +73,6 @@ Gameplay Rules (STRICT):
 4. EXCLUSION: Links to channels, playlists (URLs containing 'list='), short cinematic trailers, cutscenes, or videos from unknown/small user accounts are forbidden. The video must be pure in-game action.
 Do NOT include explanations, comments, markdown, or any text outside the JSON. Return ONLY the JSON array.`;
 
-const cleanupPromptText = `You are a data sanitation service. Your only task is to take the following text and convert it into a valid JSON array of objects.
-- Ensure the final output is ONLY the JSON array and nothing else.
-- Correct any formatting errors.
-- Do not add, remove, or change any data, just fix the structure.
-- If the input is empty or contains no valid data, return an empty array [].
-- The response MUST start with '[' and end with ']'.
-
-Input text to clean:`;
-
 const fetchFreeGamesFlow = ai.defineFlow(
   {
     name: 'fetchFreeGamesFlow',
@@ -93,7 +83,6 @@ const fetchFreeGamesFlow = ai.defineFlow(
         games: FreeGamesOutputSchema,
         initialPrompt: z.string(),
         rawOutput: z.string(),
-        cleanupPrompt: z.string(),
     }),
   },
   async (input) => {
@@ -111,11 +100,8 @@ const fetchFreeGamesFlow = ai.defineFlow(
 
     const rawOutput = initialResponse.text ?? '[]';
     
-    // DEBUG: Bypass Step 2 (Cleanup) and use raw output directly
     let games: FreeGame[] = [];
-    let cleanupPromptForDebug = 'Cleanup step bypassed for debugging.';
     try {
-        // Attempt to parse the raw output directly
         let jsonString = rawOutput;
         const jsonStartIndex = rawOutput.indexOf('[');
         const jsonEndIndex = rawOutput.lastIndexOf(']');
@@ -127,24 +113,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
         console.error("Failed to parse raw output as JSON:", e);
         console.error("Raw output was:", rawOutput);
         games = []; // Return empty array on parsing failure
-        cleanupPromptForDebug = `Cleanup step bypassed. FAILED TO PARSE RAW OUTPUT. Error: ${e instanceof Error ? e.message : String(e)}`;
     }
-
-
-    /*
-    // Step 2: Clean up the raw text and format it as valid JSON
-    const finalPrompt = cleanupPromptText + rawOutput;
-    
-    const { output: finalOutput } = await ai.generate({
-        prompt: finalPrompt,
-        output: {
-            schema: FreeGamesOutputSchema,
-        },
-    });
-
-    const games = finalOutput || [];
-    */
-
 
     // Filter the results to only include games with allowed image URLs
     const filteredGames = games.filter((game: FreeGame) => {
@@ -161,7 +130,6 @@ const fetchFreeGamesFlow = ai.defineFlow(
         games: filteredGames,
         initialPrompt: initialPromptText,
         rawOutput: rawOutput,
-        cleanupPrompt: cleanupPromptForDebug, // Using the debug prompt
     };
   }
 );

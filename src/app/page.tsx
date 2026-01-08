@@ -6,7 +6,6 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal, Info, Database, Cloud } from 'lucide-react';
 import type { Game } from '@/lib/game';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { ClearCacheButton } from '@/components/clear-cache-button';
 
 export const maxDuration = 120; // 2 minutes
@@ -62,7 +61,7 @@ async function GamesSection() {
 }
 
 function DebugInfo({ result }: { result: FetchGamesResult }) {
-  const { source, games, timestamp, initialPrompt, rawOutput, cleanupPrompt } = result;
+  const { source, games, timestamp, initialPrompt, rawOutput } = result;
   const isCache = source === 'Cache';
 
   return (
@@ -103,23 +102,14 @@ function DebugInfo({ result }: { result: FetchGamesResult }) {
           </div>
           
           <div>
-            <h3 className="font-semibold mb-2">Raw AI Output (Step 1)</h3>
+            <h3 className="font-semibold mb-2">Raw AI Output</h3>
             <pre className="p-4 rounded-lg bg-muted/50 text-sm max-h-96 overflow-auto">
               <code>{rawOutput}</code>
             </pre>
           </div>
-
-          <Separator />
-
-          <div>
-            <h3 className="font-semibold mb-2">Cleanup Prompt (Step 2)</h3>
-            <pre className="p-4 rounded-lg bg-muted/50 text-sm overflow-x-auto">
-              <code>{cleanupPrompt}</code>
-            </pre>
-          </div>
           
           <div>
-            <h3 className="font-semibold mb-2">Final JSON Response (Step 2)</h3>
+            <h3 className="font-semibold mb-2">Final Parsed JSON</h3>
             <pre className="p-4 rounded-lg bg-muted/50 text-sm max-h-96 overflow-auto">
               <code>{JSON.stringify(games, null, 2)}</code>
             </pre>
