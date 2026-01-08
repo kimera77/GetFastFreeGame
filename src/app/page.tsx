@@ -3,10 +3,17 @@ import { GameList } from '@/components/game-list';
 import { LoadingSkeleton } from '@/components/loading-skeleton';
 import { Suspense } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Info, Database, Cloud } from 'lucide-react';
+import { Terminal, Info, Database, Cloud, ChevronDown } from 'lucide-react';
 import type { Game } from '@/lib/game';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ClearCacheButton } from '@/components/clear-cache-button';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+
 
 export const maxDuration = 120; // 2 minutes
 
@@ -61,54 +68,64 @@ async function GamesSection() {
 }
 
 function DebugInfo({ result }: { result: FetchGamesResult }) {
-  const { source, games, timestamp, initialPrompt, rawOutput } = result;
+  const { source, timestamp, initialPrompt, rawOutput } = result;
   const isCache = source === 'Cache';
 
   return (
     <div className="container mx-auto px-4 py-8 mt-8">
-      <h2 className="text-2xl font-headline font-bold mb-4 text-center">Debug Information</h2>
-      <Card className="bg-card/50">
-        <CardHeader>
-           <div className="flex justify-between items-center">
-            <CardTitle className="flex items-center gap-2 text-lg">
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="border rounded-lg bg-card/50">
+          <AccordionTrigger className="px-6 py-4 text-lg font-bold hover:no-underline">
+            <div className="flex items-center gap-2">
               <Info className="h-5 w-5" />
-              Data Fetching Details
-            </CardTitle>
-            <ClearCacheButton />
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center gap-4 p-4 rounded-lg bg-muted/50">
-            {isCache ? (
-              <Database className="h-6 w-6 text-primary" />
-            ) : (
-              <Cloud className="h-6 w-6 text-accent" />
-            )}
-            <div>
-              <p className="font-semibold">Data Source: <span className={isCache ? 'text-primary' : 'text-accent'}>{source}</span></p>
-              <p className="text-sm text-muted-foreground">
-                {isCache
-                  ? `Loaded from cache. Data from: ${new Date(timestamp).toLocaleString()}`
-                  : `Fetched fresh from API at: ${new Date(timestamp).toLocaleString()}`}
-              </p>
+              <span>Debug Information</span>
             </div>
-          </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <Card className="border-0 shadow-none bg-transparent">
+              <CardHeader className="pt-0">
+                <div className="flex justify-between items-center">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    Data Fetching Details
+                  </CardTitle>
+                  <ClearCacheButton />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center gap-4 p-4 rounded-lg bg-muted/50">
+                  {isCache ? (
+                    <Database className="h-6 w-6 text-primary" />
+                  ) : (
+                    <Cloud className="h-6 w-6 text-accent" />
+                  )}
+                  <div>
+                    <p className="font-semibold">Data Source: <span className={isCache ? 'text-primary' : 'text-accent'}>{source}</span></p>
+                    <p className="text-sm text-muted-foreground">
+                      {isCache
+                        ? `Loaded from cache. Data from: ${new Date(timestamp).toLocaleString()}`
+                        : `Fetched fresh from API at: ${new Date(timestamp).toLocaleString()}`}
+                    </p>
+                  </div>
+                </div>
 
-          <div>
-            <h3 className="font-semibold mb-2">Initial Prompt (Step 1)</h3>
-            <pre className="p-4 rounded-lg bg-muted/50 text-sm overflow-x-auto">
-              <code>{initialPrompt}</code>
-            </pre>
-          </div>
-          
-          <div>
-            <h3 className="font-semibold mb-2">Raw AI Output</h3>
-            <pre className="p-4 rounded-lg bg-muted/50 text-sm max-h-96 overflow-auto">
-              <code>{rawOutput}</code>
-            </pre>
-          </div>
-        </CardContent>
-      </Card>
+                <div>
+                  <h3 className="font-semibold mb-2">Initial Prompt (Step 1)</h3>
+                  <pre className="p-4 rounded-lg bg-muted/50 text-sm overflow-x-auto">
+                    <code>{initialPrompt}</code>
+                  </pre>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold mb-2">Raw AI Output</h3>
+                  <pre className="p-4 rounded-lg bg-muted/50 text-sm max-h-96 overflow-auto">
+                    <code>{rawOutput}</code>
+                  </pre>
+                </div>
+              </CardContent>
+            </Card>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 }
