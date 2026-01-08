@@ -154,7 +154,7 @@ const getCachedGames = cache(
   ['free-games-data-v3'],
   {
     tags: ['free-games-data-v3'],
-    revalidate: 86400, // 24 hours in seconds
+    revalidate: 72000, // 20 hours in seconds
   }
 );
 
