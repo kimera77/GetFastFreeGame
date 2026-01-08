@@ -3,7 +3,7 @@ import { GameList } from '@/components/game-list';
 import { LoadingSkeleton } from '@/components/loading-skeleton';
 import { Suspense } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Info, Database, Cloud, ChevronDown } from 'lucide-react';
+import { Terminal, Info, Database, Cloud } from 'lucide-react';
 import type { Game } from '@/lib/game';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ClearCacheButton } from '@/components/clear-cache-button';
@@ -84,14 +84,11 @@ function DebugInfo({ result }: { result: FetchGamesResult }) {
           <AccordionContent>
             <Card className="border-0 shadow-none bg-transparent">
               <CardHeader className="pt-0">
-                <div className="flex justify-between items-center">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    Data Fetching Details
-                  </CardTitle>
-                  <ClearCacheButton />
-                </div>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  Data Fetching Details
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 relative">
                 <div className="flex items-center gap-4 p-4 rounded-lg bg-muted/50">
                   {isCache ? (
                     <Database className="h-6 w-6 text-primary" />
@@ -120,6 +117,9 @@ function DebugInfo({ result }: { result: FetchGamesResult }) {
                   <pre className="p-4 rounded-lg bg-muted/50 text-sm max-h-96 overflow-auto">
                     <code>{rawOutput}</code>
                   </pre>
+                </div>
+                <div className="absolute bottom-4 right-4 opacity-0">
+                    <ClearCacheButton />
                 </div>
               </CardContent>
             </Card>
