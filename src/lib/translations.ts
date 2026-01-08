@@ -17,7 +17,7 @@ export const translations: Record<Language, Translation> = {
     getGame: 'Get Game',
     close: 'Close',
     aiDisclaimer:
-      'The AI model is under development and may produce incorrect results. We apologize for any inconvenience.',
+      'The AI model is under development and may produce incorrect results. We apologize for any inconvenience. If you want to help or provide suggestions, please contact jsrbtc7@gmail.com.',
   },
   es: {
     headerSubtitle: 'JUEGOS GRATIS CADA DÍA',
@@ -26,7 +26,7 @@ export const translations: Record<Language, Translation> = {
     getGame: 'Obtener Juego',
     close: 'Cerrar',
     aiDisclaimer:
-      'El modelo de IA está en desarrollo y puede dar resultados erróneos. Lamentamos las molestias.',
+      'El modelo de IA está en desarrollo y puede dar resultados erróneos. Lamentamos las molestias. Si quieres aportar ayuda o sugerencias, contacta a jsrbtc7@gmail.com.',
   },
   de: {
     headerSubtitle: 'TÄGLICHE SPIELE-DROPS',
@@ -35,7 +35,7 @@ export const translations: Record<Language, Translation> = {
     getGame: 'Spiel holen',
     close: 'Schließen',
     aiDisclaimer:
-      'Das KI-Modell befindet sich in der Entwicklung und kann fehlerhafte Ergebnisse liefern. Wir bitten um Entschuldigung für eventuelle Unannehmlichkeiten.',
+      'Das KI-Modell befindet sich in der Entwicklung und kann fehlerhafte Ergebnisse liefern. Wir bitten um Entschuldigung für eventuelle Unannehmlichkeiten. Wenn Sie helfen oder Vorschläge machen möchten, kontaktieren Sie bitte jsrbtc7@gmail.com.',
   },
   fr: {
     headerSubtitle: 'JEUX GRATUITS DU JOUR',
@@ -44,7 +44,7 @@ export const translations: Record<Language, Translation> = {
     getGame: 'Obtenir le jeu',
     close: 'Fermer',
     aiDisclaimer:
-      'Le modèle d\'IA est en cours de développement et peut produire des résultats incorrects. Nous nous excusons pour tout inconvénient.',
+      'Le modèle d\'IA est en cours de développement et peut produire des résultats incorrects. Nous nous excusons pour tout inconvénient. Si vous souhaitez aider ou faire des suggestions, veuillez contacter jsrbtc7@gmail.com.',
   },
   pt: {
     headerSubtitle: 'JOGOS GRÁTIS DIÁRIOS',
@@ -53,7 +53,7 @@ export const translations: Record<Language, Translation> = {
     getGame: 'Obter Jogo',
     close: 'Fechar',
     aiDisclaimer:
-      'O modelo de IA está em desenvolvimento e pode produzir resultados incorretos. Pedimos desculpa por qualquer inconveniente.',
+      'O modelo de IA está em desenvolvimento e pode produzir resultados incorretos. Pedimos desculpa por qualquer inconveniente. Se quiser ajudar ou dar sugestões, por favor contacte jsrbtc7@gmail.com.',
   },
   it: {
     headerSubtitle: 'GIOCHI GRATIS DEL GIORNO',
@@ -62,7 +62,7 @@ export const translations: Record<Language, Translation> = {
     getGame: 'Ottieni Gioco',
     close: 'Chiudi',
     aiDisclaimer:
-      'Il modello di intelligenza artificiale è in fase di sviluppo e potrebbe produrre risultati errati. Ci scusiamo per eventuali inconvenienti.',
+      'Il modello di intelligenza artificiale è in fase di sviluppo e potrebbe produrre risultati errati. Ci scusiamo per eventuali inconvenienti. Se vuoi aiutare o fornire suggerimenti, contatta jsrbtc7@gmail.com.',
   },
 };
 
