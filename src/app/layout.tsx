@@ -4,7 +4,7 @@ import {Toaster} from '@/components/ui/toaster';
 import {cn} from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Daily Game Drop',
+  title: 'Get Fast Free Game',
   description: 'Your daily source for free games.',
 };
 
