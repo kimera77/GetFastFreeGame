@@ -107,13 +107,6 @@ function DebugInfo({ result }: { result: FetchGamesResult }) {
               <code>{rawOutput}</code>
             </pre>
           </div>
-          
-          <div>
-            <h3 className="font-semibold mb-2">Final Parsed JSON</h3>
-            <pre className="p-4 rounded-lg bg-muted/50 text-sm max-h-96 overflow-auto">
-              <code>{JSON.stringify(games, null, 2)}</code>
-            </pre>
-          </div>
         </CardContent>
       </Card>
     </div>
