@@ -94,7 +94,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
     try {
         let jsonString = rawOutput;
         const jsonStartIndex = rawOutput.indexOf('[');
-        const jsonEndIndex = rawOmitut.lastIndexOf(']');
+        const jsonEndIndex = rawOutput.lastIndexOf(']');
         if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
             jsonString = rawOutput.substring(jsonStartIndex, jsonEndIndex + 1);
         }
@@ -129,7 +129,6 @@ const fetchFreeGamesFlow = ai.defineFlow(
 
 const getCachedGames = cache(
   async (platforms: string): Promise<Omit<FetchGamesResult, 'source'>> => {
-    console.log('Fetching from API and caching...');
     try {
       const result = await fetchFreeGamesFlow({ platforms });
       return {
