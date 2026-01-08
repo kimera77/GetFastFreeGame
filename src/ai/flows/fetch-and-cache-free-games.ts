@@ -8,7 +8,7 @@
  * - FreeGame: Type definition based on PlatformGamesSchema.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, modelGenkit} from '@/ai/genkit';
 import {z} from 'zod';
 import { unstable_cache as cache, revalidateTag } from 'next/cache';
 
@@ -129,7 +129,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
         }
     });
     
-    const modelName = ai.model.name || 'unknown';
+    const modelName = modelGenkit || 'unknown';
 
     return {
         games: filteredGames.length > 0 ? filteredGames : games, // Fallback to unfiltered if filter removes all
