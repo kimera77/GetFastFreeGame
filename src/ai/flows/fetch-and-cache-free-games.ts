@@ -132,7 +132,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
         games: filteredGames,
         initialPrompt: initialPromptText,
         rawOutput: rawOutput,
-        modelName: ai.model.name,
+        modelName: initialResponse.model,
     };
   }
 );
