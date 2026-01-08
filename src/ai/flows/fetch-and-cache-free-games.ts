@@ -129,10 +129,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
         }
     });
     
-    const modelName =
-      initialResponse.candidates && initialResponse.candidates.length > 0
-        ? initialResponse.candidates[0]?.model || 'unknown'
-        : 'unknown';
+    const modelName = ai.model.name || 'unknown';
 
     return {
         games: filteredGames.length > 0 ? filteredGames : games, // Fallback to unfiltered if filter removes all
