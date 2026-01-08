@@ -45,22 +45,35 @@ const ALLOWED_IMAGE_HOSTNAMES = [
     'images-na.ssl-images-amazon.com',
 ];
 
-const initialPromptText = `You are a backend service that returns DATA ONLY. Your task is to find currently free games and return them as a JSON array.
+const initialPromptText = `You are a backend service, not a chat assistant. Your task is to return DATA ONLY. You MUST return a valid JSON array based on real-time web search results for games.
 
-SEARCH RULES:
-1. Use real-time web search.
-2. Find games on these platforms: Epic Games Store, Amazon Prime Gaming, GOG, Steam.
-3. Include ONLY games that are free to claim and keep forever (100% discount, limited time).
-4. EXCLUDE: Free-to-Play games, trials, demos, or games requiring a subscription to play.
+Search and Content Rules (STRICT):
+1. Use Google Search to find real-time information.
+2. Platforms to search: Epic Games Store, Amazon Prime Gaming, GOG, Steam.
+3. Include ONLY games that are available for a **limited time only** to claim and **keep forever** (100% discount).
+4. EXCLUDE: permanently Free-to-Play, trials, betas, demos, or games that require a subscription to play but are not 'claimed'.
+5. Do NOT guess data. Do NOT hallucinate prices, dates, or links.
 
-JSON SCHEMA:
-- The response MUST be a valid JSON array, starting with '[' and ending with ']'.
-- Each object in the array MUST have these keys: title, platform, dealLink, imageURL, endDate, original_price, gameplay.
-- 'platform' MUST be one of: 'Epic Games Store', 'Amazon Prime Gaming', 'GOG', 'Steam'.
-- 'imageURL' should be a direct link to a representative image for the game.
-- 'gameplay' should be a YouTube URL of gameplay footage if available.
+Schema Rules (STRICT):
+The response MUST start with '[' and end with ']'. Each element MUST be an object with ONLY the following keys: title, platform, dealLink, imageURL, endDate, original_price, gameplay.
 
-Do NOT include explanations, comments, or any text outside the JSON array.`;
+Platform Key: MUST use one of these exact strings: 'Epic Games Store', 'Amazon Prime Gaming', 'GOG', 'Steam'.
+
+Image Rules (MANDATORY):
+1. imageURL MUST be from one of these allowed domains ONLY: ${ALLOWED_IMAGE_HOSTNAMES.join(', ')}.
+2. **HIGH ACCURACY:** To prevent image errors (e.g., incorrect Steam IDs), if the game exists on Steam, you MUST find and use the **verified Steam App ID** to construct the URL: https://cdn.akamai.steamstatic.com/steam/apps/[ID]/header.jpg.
+3. If a valid, high-accuracy image URL from the allowed domains cannot be found or verified, that game MUST be excluded.
+
+Gameplay Rules (STRICT):
+1. URL Source: The value for 'gameplay' MUST be a direct, single YouTube video URL (https://www.youtube.com/watch?v=...).
+2. STABLE LINK SEARCH: For each game, you MUST perform a Google Search query for "youtube [Game Title] Gameplay".
+3. **VETTING & LONGEVITY (MANDATORY HIERARCHY):** The selected URL MUST satisfy the following conditions, strictly in this order of priority:
+    a. **Stability & Authority Priority (P1):** The video MUST be from a **verified, high-authority channel** (Official Developer/Publisher, IGN, GameSpot, PC Gamer, etc.). Videos from these channels are prioritized even if they are not the #1 search result.
+    b. **Substantial Footage (P2):** The video MUST have a duration of **over 5 minutes** to ensure it is substantial, unedited gameplay footage, not a short cinematic trailer or cutscene.
+    c. **Top Result Vetting (P3):** If multiple authoritative links exist, use the highest-ranking one. If the #1 search result does not meet P1 or P2, the search must proceed to vet the next result (2nd, 3rd, etc.) until a link is found that meets P1 and P2.
+4. EXCLUSION: Links to channels, playlists (URLs containing 'list='), short cinematic trailers, cutscenes, or videos from unknown/small user accounts are forbidden. The video must be pure in-game action.
+Do NOT include explanations, comments, markdown, or any text outside the JSON. Return ONLY the JSON array.`;
+
 
 const fetchFreeGamesFlow = ai.defineFlow(
   {
