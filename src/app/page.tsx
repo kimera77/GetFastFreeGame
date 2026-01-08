@@ -68,7 +68,7 @@ async function GamesSection() {
 }
 
 function DebugInfo({ result }: { result: FetchGamesResult }) {
-  const { source, timestamp, initialPrompt, rawOutput } = result;
+  const { source, timestamp, initialPrompt, rawOutput, modelName } = result;
   const isCache = source === 'Cache';
 
   return (
@@ -100,7 +100,7 @@ function DebugInfo({ result }: { result: FetchGamesResult }) {
                     <p className="text-sm text-muted-foreground">
                       {isCache
                         ? `Loaded from cache. Data from: ${new Date(timestamp).toLocaleString()}`
-                        : `Fetched fresh from API at: ${new Date(timestamp).toLocaleString()}`}
+                        : `Fetched fresh from API (${modelName}) at: ${new Date(timestamp).toLocaleString()}`}
                     </p>
                   </div>
                 </div>

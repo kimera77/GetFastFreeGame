@@ -79,7 +79,11 @@ export function GameList({ initialGameData, initialError }: GameListProps) {
 
         <div className="mt-12 text-center text-sm text-muted-foreground">
           <p>
-            <em>* {t.aiDisclaimer}</em>
+            <em>
+              * {t.aiDisclaimer.p1}
+              <strong className="font-semibold">{t.aiDisclaimer.email}</strong>
+              {t.aiDisclaimer.p2}
+            </em>
           </p>
         </div>
       </div>

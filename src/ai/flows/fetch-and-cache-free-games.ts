@@ -32,6 +32,7 @@ export type FetchGamesResult = {
   timestamp: string;
   initialPrompt: string;
   rawOutput: string;
+  modelName: string;
 };
 
 const ALLOWED_IMAGE_HOSTNAMES = [
@@ -83,6 +84,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
         games: FreeGamesOutputSchema,
         initialPrompt: z.string(),
         rawOutput: z.string(),
+        modelName: z.string(),
     }),
   },
   async (input) => {
@@ -130,6 +132,7 @@ const fetchFreeGamesFlow = ai.defineFlow(
         games: filteredGames,
         initialPrompt: initialPromptText,
         rawOutput: rawOutput,
+        modelName: ai.model,
     };
   }
 );
