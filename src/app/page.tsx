@@ -118,7 +118,7 @@ function DebugInfo({ result }: { result: FetchGamesResult }) {
                     <code>{rawOutput}</code>
                   </pre>
                 </div>
-                <div className="absolute bottom-4 right-4 opacity-0">
+                <div className="opacity-0">
                     <ClearCacheButton />
                 </div>
               </CardContent>
