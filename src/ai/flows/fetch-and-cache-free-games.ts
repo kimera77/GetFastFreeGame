@@ -128,11 +128,13 @@ const fetchFreeGamesFlow = ai.defineFlow(
         }
     });
 
+    const modelName = initialResponse.candidates[0]?.model || 'unknown';
+
     return {
         games: filteredGames,
         initialPrompt: initialPromptText,
         rawOutput: rawOutput,
-        modelName: initialResponse.model,
+        modelName: modelName,
     };
   }
 );
@@ -147,7 +149,6 @@ const getCachedGames = cache(
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-        console.error("Error fetching games from API:", error);
         if (error instanceof Error) {
             throw new Error(error.message);
         }
