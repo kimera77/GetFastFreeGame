@@ -1,31 +1,22 @@
 'use client';
 
-import { translations } from '@/lib/translations';
+import { useState } from 'react';
+import { translations, type Language } from '@/lib/translations';
 import { Header } from '@/components/layout/header';
 import { GameCard } from '@/components/game-card';
-import type { PlatformGames } from '@/lib/game-data';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
-import type { Language } from '@/lib/translations';
+import type { Game } from '@/lib/game';
 
 
 type GameListProps = {
-  language: Language;
-  setLanguage: (language: Language) => void;
-  gameData: PlatformGames | null;
-  isLoading: boolean;
-  error: string | null;
+  allGames: Game[];
+  error?: string | null;
 }
 
-export function GameList({ language, setLanguage, gameData, isLoading, error }: GameListProps) {
+export function GameList({ allGames, error }: GameListProps) {
+  const [language, setLanguage] = useState<Language>('en');
   const t = translations[language];
-
-  const allGames = gameData
-    ? Object.entries(gameData).flatMap(([platform, games]) =>
-        games.map((game) => ({ ...game, platform }))
-      )
-    : [];
 
   return (
     <>
@@ -43,30 +34,7 @@ export function GameList({ language, setLanguage, gameData, isLoading, error }: 
           </p>
         </div>
 
-        {isLoading ? (
-          <div className="mt-8 flex flex-col gap-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="flex flex-col sm:flex-row items-center p-4 bg-card/80 backdrop-blur-sm border border-border/30 rounded-lg w-full group">
-                    <div className="flex-shrink-0 w-full sm:w-48 h-32 sm:h-24 relative mb-4 sm:mb-0 sm:mr-4">
-                        <Skeleton className="w-full h-full" />
-                    </div>
-                    <div className="flex-grow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
-                        <div className="flex-grow">
-                            <Skeleton className="h-6 w-3/4 mb-2" />
-                            <Skeleton className="h-8 w-1/2" />
-                        </div>
-                        <div className="flex-shrink-0 flex flex-col items-stretch sm:items-end gap-2 w-full sm:w-auto mt-3 sm:mt-0">
-                            <Skeleton className="h-9 w-24" />
-                            <div className="flex items-center justify-end gap-4 w-full mt-2">
-                                <Skeleton className="h-5 w-20" />
-                                <Skeleton className="h-9 w-28" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ))}
-          </div>
-        ) : error ? (
+        {error ? (
           <Alert variant="destructive">
             <Terminal className="h-4 w-4" />
             <AlertTitle>Error Fetching Games</AlertTitle>
@@ -81,7 +49,7 @@ export function GameList({ language, setLanguage, gameData, isLoading, error }: 
               allGames.map((game, index) => (
                 <GameCard
                   key={`${game.platform}-${game.name}-${index}`}
-                  game={game}
+                  game={game as Game & { platform: string }}
                   translations={t}
                 />
               ))
