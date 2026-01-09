@@ -1,5 +1,3 @@
-'use server';
-
 import { fetchAndCacheFreeGames } from '@/ai/flows/fetch-and-cache-free-games';
 import { NextResponse } from 'next/server';
 
