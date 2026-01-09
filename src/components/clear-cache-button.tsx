@@ -41,6 +41,7 @@ export function ClearCacheButton() {
       disabled={isPending || cleared}
       variant="outline"
       size="sm"
+      className="opacity-0"
     >
       {isPending ? (
         <Loader2 className="animate-spin" />
