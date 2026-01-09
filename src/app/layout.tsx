@@ -2,10 +2,17 @@ import type {Metadata} from 'next';
 import './globals.css';
 import {Toaster} from '@/components/ui/toaster';
 import {cn} from '@/lib/utils';
+import icon from '@/components/icons/icon_web.png';
 
 export const metadata: Metadata = {
   title: 'Get Fast Free Game',
   description: 'Your daily source for free games.',
+  icons: {
+    icon: {
+      url: icon.src,
+      type: 'image/png',
+    },
+  },
 };
 
 export default function RootLayout({
