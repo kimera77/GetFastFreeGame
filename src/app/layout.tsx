@@ -5,7 +5,7 @@ import {cn} from '@/lib/utils';
 import icon from '@/components/icons/icon_web.png';
 
 export const metadata: Metadata = {
-  title: 'Get Fast Free Game',
+  title: 'Get Fast Free Games',
   description: 'Your daily source for free games.',
   icons: {
     icon: {

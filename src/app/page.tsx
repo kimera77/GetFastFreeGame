@@ -18,7 +18,7 @@ function LoadingGrid() {
     <div className="container mx-auto px-4 py-8">
         <div className="text-center my-12">
           <h1 className="text-6xl md:text-8xl font-headline font-bold text-primary uppercase tracking-wider mb-2">
-            Get Fast Free Game
+            Get Fast Free Games
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Stay up-to-date with all the limited-time, fully redeemable free games available on major video game platforms.
