@@ -8,7 +8,7 @@ import { DebugInfo } from '@/components/debug-info';
 import { Game } from '@/lib/game';
 
 async function getGames(): Promise<FetchGamesResult> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/games`, { cache: 'no-store' });
+  const res = await fetch(`${process.env.URL}/api/games`, { cache: 'no-store' });
   
   if (!res.ok) {
     const errorText = await res.text();
@@ -35,8 +35,10 @@ export default async function Home() {
 
     return (
       <main className="min-h-screen bg-background">
-        <GameList allGames={gamesWithData} />
-        {debugInfo && <DebugInfo result={debugInfo} />}
+        <Suspense fallback={<GameList allGames={[]} />}>
+          <GameList allGames={gamesWithData} />
+          {debugInfo && <DebugInfo result={debugInfo} />}
+        </Suspense>
       </main>
     );
 
