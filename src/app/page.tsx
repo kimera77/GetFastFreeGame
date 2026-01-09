@@ -1,12 +1,13 @@
-import { GameList } from '@/components/game-list';
+import { GameListContainer } from '@/components/game-list-container';
 import { Suspense } from 'react';
 import { LoadingSkeleton } from '@/components/loading-skeleton';
+
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-background">
       <Suspense fallback={<LoadingGrid />}>
-        <GameList />
+        <GameListContainer />
       </Suspense>
     </main>
   );

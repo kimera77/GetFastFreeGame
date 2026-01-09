@@ -1,75 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { translations, type Language } from '@/lib/translations';
+import { translations } from '@/lib/translations';
 import { Header } from '@/components/layout/header';
 import { GameCard } from '@/components/game-card';
 import type { PlatformGames } from '@/lib/game-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
-import { DebugInfo } from '@/components/debug-info';
-import type { FetchGamesResult } from '@/ai/flows/fetch-and-cache-free-games';
+import type { Language } from '@/lib/translations';
 
-type ApiGame = {
-  name: string;
-  platform: string;
-  game_link: string;
-  cover_image: string;
-  original_price?: string;
-  endDate?: string;
-  gameplay_url?: string;
-};
 
-export function GameList() {
-  const [language, setLanguage] = useState<Language>('en');
-  const [gameData, setGameData] = useState<PlatformGames | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<Omit<FetchGamesResult, 'games'> | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  
+type GameListProps = {
+  language: Language;
+  setLanguage: (language: Language) => void;
+  gameData: PlatformGames | null;
+  isLoading: boolean;
+  error: string | null;
+}
+
+export function GameList({ language, setLanguage, gameData, isLoading, error }: GameListProps) {
   const t = translations[language];
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-        const response = await fetch('/api/games');
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
-        }
-        const result: FetchGamesResult = await response.json();
-        
-        const gamesWithData: ApiGame[] = result.games.map((game) => ({
-          name: game.title,
-          platform: game.platform,
-          game_link: game.dealLink,
-          cover_image: game.imageURL,
-          original_price: game.original_price,
-          endDate: game.endDate,
-          gameplay_url: game.gameplay,
-        }));
-
-        const platformGames: PlatformGames = {
-          "Epic Games Store": gamesWithData.filter(g => g.platform === 'Epic Games Store'),
-          "Amazon Prime Gaming": gamesWithData.filter(g => g.platform === 'Amazon Prime Gaming'),
-          "GOG": gamesWithData.filter(g => g.platform === 'GOG'),
-          "Steam": gamesWithData.filter(g => g.platform === 'Steam'),
-        };
-        
-        setGameData(platformGames);
-        const { games, ...rest } = result;
-        setDebugInfo(rest);
-
-      } catch (e) {
-        setError(e instanceof Error ? e.message : 'An unknown error occurred.');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
 
   const allGames = gameData
     ? Object.entries(gameData).flatMap(([platform, games]) =>
@@ -142,8 +92,6 @@ export function GameList() {
             )}
           </div>
         )}
-
-        {debugInfo && <DebugInfo result={debugInfo} />}
 
         <div className="mt-12 text-center text-sm text-muted-foreground">
           <p>
