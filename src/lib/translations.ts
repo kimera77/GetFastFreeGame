@@ -17,7 +17,7 @@ type Translation = {
 
 export const translations: Record<Language, Translation> = {
   en: {
-    headerSubtitle: 'Get Fast Free Game',
+    headerSubtitle: 'Get Fast Free Games',
     description:
       'Stay up-to-date with all the limited-time, fully redeemable free games available on major video game platforms.',
     getGame: 'Get Game',
