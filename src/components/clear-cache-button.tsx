@@ -13,16 +13,25 @@ export function ClearCacheButton() {
 
   const handleClick = () => {
     startTransition(async () => {
-      await clearGamesCache();
-      toast({
-        title: 'Cache Cleared',
-        description: 'The game data cache has been successfully cleared. Refresh the page to see the changes.',
-      });
-      setCleared(true);
-      // Reset the button state after a short delay
-      setTimeout(() => setCleared(false), 2000);
-      // We don't call router.refresh() here, to prevent the page from reloading automatically.
-      // The user will see fresh data on the next manual refresh.
+      try {
+        await clearGamesCache();
+        toast({
+          title: 'Cache Cleared',
+          description: 'The game data cache has been successfully cleared. The changes will be visible on the next page refresh.',
+        });
+        setCleared(true);
+        setTimeout(() => setCleared(false), 2000);
+        
+        // We trigger a page reload to fetch the new data
+        window.location.reload();
+
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Error Clearing Cache',
+          description: 'Something went wrong while clearing the cache.',
+        });
+      }
     });
   };
 

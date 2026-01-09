@@ -155,10 +155,10 @@ const getCachedGames = cache(
         throw new Error('An unknown error occurred while fetching games.');
     }
   },
-  ['free-games-list-data'], // Use a stable key for caching
+  ['free-games-list-data'],
   {
-    revalidate: 72000, // 20 hours in seconds
-    tags: ['free-games-data'], // Tag for revalidation
+    revalidate: 72000, // 20 hours
+    tags: ['free-games-data'], 
   }
 );
 
@@ -170,9 +170,6 @@ export async function fetchAndCacheFreeGames(platforms: string): Promise<FetchGa
   const cacheTime = new Date(data.timestamp);
   const diffInSeconds = (now.getTime() - cacheTime.getTime()) / 1000;
 
-  // This is a heuristic to determine if the data is fresh from the API.
-  // If the data was fetched within the last 5 seconds, we'll consider it "API".
-  // Otherwise, we'll assume it's from the cache.
   const source = diffInSeconds < 5 ? 'API' : 'Cache';
   
   return {

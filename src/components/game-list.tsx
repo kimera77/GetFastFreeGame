@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { translations, type Language } from '@/lib/translations';
 import { Header } from '@/components/layout/header';
 import { GameCard } from '@/components/game-card';
@@ -8,25 +8,74 @@ import type { PlatformGames } from '@/lib/game-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
+import { DebugInfo } from '@/components/debug-info';
+import type { FetchGamesResult } from '@/ai/flows/fetch-and-cache-free-games';
 
+type ApiGame = {
+  name: string;
+  platform: string;
+  game_link: string;
+  cover_image: string;
+  original_price?: string;
+  endDate?: string;
+  gameplay_url?: string;
+};
 
-type GameListProps = {
-    initialGameData: PlatformGames | null;
-    initialError: string | null;
-}
-
-export function GameList({ initialGameData, initialError }: GameListProps) {
+export function GameList() {
   const [language, setLanguage] = useState<Language>('en');
+  const [gameData, setGameData] = useState<PlatformGames | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<Omit<FetchGamesResult, 'games'> | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   const t = translations[language];
 
-  const allGames = initialGameData
-    ? Object.entries(initialGameData).flatMap(([platform, games]) =>
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/games');
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        const result: FetchGamesResult = await response.json();
+        
+        const gamesWithData: ApiGame[] = result.games.map((game) => ({
+          name: game.title,
+          platform: game.platform,
+          game_link: game.dealLink,
+          cover_image: game.imageURL,
+          original_price: game.original_price,
+          endDate: game.endDate,
+          gameplay_url: game.gameplay,
+        }));
+
+        const platformGames: PlatformGames = {
+          "Epic Games Store": gamesWithData.filter(g => g.platform === 'Epic Games Store'),
+          "Amazon Prime Gaming": gamesWithData.filter(g => g.platform === 'Amazon Prime Gaming'),
+          "GOG": gamesWithData.filter(g => g.platform === 'GOG'),
+          "Steam": gamesWithData.filter(g => g.platform === 'Steam'),
+        };
+        
+        setGameData(platformGames);
+        const { games, ...rest } = result;
+        setDebugInfo(rest);
+
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'An unknown error occurred.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const allGames = gameData
+    ? Object.entries(gameData).flatMap(([platform, games]) =>
         games.map((game) => ({ ...game, platform }))
       )
     : [];
-  
-  const isLoading = !initialGameData && !initialError;
 
   return (
     <>
@@ -47,16 +96,33 @@ export function GameList({ initialGameData, initialError }: GameListProps) {
         {isLoading ? (
           <div className="mt-8 flex flex-col gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 w-full rounded-lg" />
+                <div key={i} className="flex flex-col sm:flex-row items-center p-4 bg-card/80 backdrop-blur-sm border border-border/30 rounded-lg w-full group">
+                    <div className="flex-shrink-0 w-full sm:w-48 h-32 sm:h-24 relative mb-4 sm:mb-0 sm:mr-4">
+                        <Skeleton className="w-full h-full" />
+                    </div>
+                    <div className="flex-grow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
+                        <div className="flex-grow">
+                            <Skeleton className="h-6 w-3/4 mb-2" />
+                            <Skeleton className="h-8 w-1/2" />
+                        </div>
+                        <div className="flex-shrink-0 flex flex-col items-stretch sm:items-end gap-2 w-full sm:w-auto mt-3 sm:mt-0">
+                            <Skeleton className="h-9 w-24" />
+                            <div className="flex items-center justify-end gap-4 w-full mt-2">
+                                <Skeleton className="h-5 w-20" />
+                                <Skeleton className="h-9 w-28" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             ))}
           </div>
-        ) : initialError ? (
+        ) : error ? (
           <Alert variant="destructive">
             <Terminal className="h-4 w-4" />
             <AlertTitle>Error Fetching Games</AlertTitle>
             <AlertDescription>
                 <p>Could not retrieve the game list from the API.</p>
-                <pre className="mt-2 whitespace-pre-wrap text-xs"><code>{initialError}</code></pre>
+                <pre className="mt-2 whitespace-pre-wrap text-xs"><code>{error}</code></pre>
             </AlertDescription>
           </Alert>
         ) : (
@@ -76,6 +142,8 @@ export function GameList({ initialGameData, initialError }: GameListProps) {
             )}
           </div>
         )}
+
+        {debugInfo && <DebugInfo result={debugInfo} />}
 
         <div className="mt-12 text-center text-sm text-muted-foreground">
           <p>
