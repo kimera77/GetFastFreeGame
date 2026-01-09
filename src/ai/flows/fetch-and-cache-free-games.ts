@@ -155,12 +155,13 @@ const getCachedGames = cache(
         throw new Error('An unknown error occurred while fetching games.');
     }
   },
-  ['free-games-data-v3'],
+  ['free-games-list-data'], // Use a stable key for caching
   {
-    tags: ['free-games-data-v3'],
     revalidate: 72000, // 20 hours in seconds
+    tags: ['free-games-data'], // Tag for revalidation
   }
 );
+
 
 export async function fetchAndCacheFreeGames(platforms: string): Promise<FetchGamesResult> {
   const data = await getCachedGames(platforms);
