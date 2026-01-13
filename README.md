@@ -11,7 +11,7 @@ I created this project so that people would have a website where they could see 
 - **🌐 Multi-Language Support**: The UI is translated into English, Spanish, German, French, Portuguese, and Italian.
 - **🐛 Debug Panel**: An expandable section shows the raw AI output, data source (Cache vs. API), and a button to manually clear the cache for testing.
 - **📱 Fully Responsive Design**: Looks and works great on all devices, from mobile phones to desktops.
-- - **🎬 Embedded Gameplay Videos**: Users can watch gameplay trailers directly on the site.
+- **🎬 Embedded Gameplay Videos**: Users can watch gameplay trailers directly on the site.
 
 ---
 
