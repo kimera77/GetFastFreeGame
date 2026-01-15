@@ -3,8 +3,8 @@
 I created this project so that people would have a website where they could see a summary of the offers that come out on platforms to claim free games.
 
 https://getfastfreegames.com/
-or
-https://studio--studio-6506132767-e5467.us-central1.hosted.app/
+
+or --> https://studio--studio-6506132767-e5467.us-central1.hosted.app/
 
 <img src="evi1_gffg.png" width="70%">
 ---
